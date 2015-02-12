@@ -1,0 +1,46 @@
+													'~-Random notes-~'
+---------------------------------------------------------------------------------------------------------------------------------------------
+the laser pointers start the updating chain of lasers throughout the board
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+theoretically you shouldn't need to ever type a laser number (LASER_RED_EW) into a level because the pointer will do that for you... 
+
+speaking of which(^) IMPLEMENT DIFFERENT COLORED LASERS!
+---------------------------------------------------------------------------------------------------------------------------------------------
+The processes of rendering and updating buttons work completely independently of each other (maybe try to fix later)
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+If YOU USE input.isKeyDown(Key) rather than input.isKeyPressed(Key) it will flicker when you hold down the key (Bad!)
+But if you use the latter then it will remember if you hit it on the previous screen :/ 
+SOLUTION! : Use both! check keyPressed first, then keyDown lik dis:
+    if (input.isKeyPressed(Input.KEY_ESCAPE)) {
+        if (input.isKeyDown(Input.KEY_ESCAPE)) {
+        }
+    }
+---------------------------------------------------------------------------------------------------------------------------------------------
+In order to catch a mouse release (and prevent clicking by holding the mouse button) use:
+	{
+		boolean clicked = false;
+		void update() {
+			if(Mouse.isButtonDown(0) && !clicked) doStuff();
+			clicked = Mouse.isButtonDown(0);
+		}
+	}
+---------------------------------------------------------------------------------------------------------------------------------------------
+FIX THE STUPID WAY OF GETTING GRID UPDATES -  SO UGRY AND TYPE UNSAFE GAHH
+MAKE LEVEL EDITING BETTER ALREADY MAN
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Level r/w is done with Squares.java (enum) and ordinals. (Blank = 0, NPointer = 1 ...)
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Fix the stupid way of entering levels into the system (Creating a button with x/y blah blah blah) Too complicated..
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Images and types of squares are different. There are way more types of squares (pointerN, pointerS...) than there are types of images (Pointer)
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Levels are made up of an array of Tile objects, which each have a field - Shape. In other words, the Square class is for holding a specific
+instance of a square, with metadata, and the Level class just holds an organized array of them. The Squares enum is just for type safety I guess...
+
+---------------------------------------------------------------------------------------------------------------------------------------------
