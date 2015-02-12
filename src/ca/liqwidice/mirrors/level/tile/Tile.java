@@ -29,13 +29,14 @@ public abstract class Tile {
 	protected Level level;
 	protected Image image;
 	protected int id;
-	protected Laser laser = Laser.NULL;
+	protected Laser laser; // stores this tile's laser object (there can only be one, for now at least)
 
 	public Tile(int id, int x, int y, Level level) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.level = level;
+		this.laser = Laser.NULL;
 	}
 
 	//	/** Returns whether or not Tile t has a laser that is  */
@@ -58,20 +59,19 @@ public abstract class Tile {
 		return neighbors;
 	}
 
-	public abstract void update(double delta);
+	public abstract void pollInput(); // gets called every frame
 
+	public abstract void update(double delta); // gets called whenever there is input
+
+	// LATER add tick() method for animations?
+	
 	public abstract void render(int x, int y, Graphics g);
 
 	public void reset() {
 		this.laser = Laser.NULL;
 	}
 
-	/** Sets this tile's laser object to laser, and returns the Direction that the laser is exiting this tile from (or NULL) */
 	public abstract void addLaser(Laser laser);
-
-	public int getID() {
-		return id;
-	}
 
 	public int getX() {
 		return x;

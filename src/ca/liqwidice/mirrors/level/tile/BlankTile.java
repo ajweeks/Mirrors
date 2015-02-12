@@ -13,6 +13,11 @@ public class BlankTile extends Tile {
 	}
 
 	@Override
+	public void pollInput() {
+		
+	}
+	
+	@Override
 	public void update(double delta) {
 
 	}
@@ -30,6 +35,7 @@ public class BlankTile extends Tile {
 	@Override
 	public void addLaser(Laser laser) {
 		this.laser = laser;
-		laser.setDirExiting(laser.getDirEntering().opposite()); // simply let it pass through us
+		if(this.laser == Laser.NULL) return;
+		this.laser.setDirExiting(laser.getDirEntering().opposite()); // simply let it pass through us
 	}
 }

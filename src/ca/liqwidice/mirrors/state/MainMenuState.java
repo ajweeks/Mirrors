@@ -1,8 +1,8 @@
 package ca.liqwidice.mirrors.state;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
-import ca.liqwidice.mirrors.Colours;
 import ca.liqwidice.mirrors.Game;
 import ca.liqwidice.mirrors.button.Button;
 import ca.liqwidice.mirrors.button.ButtonManager;
@@ -60,8 +60,9 @@ public class MainMenuState extends BasicState {
 
 	@Override
 	public void render(Graphics g) {
-		g.setColor(Colours.purple);
-		g.drawString("Volume: " + Sound.getVolPercent() + "%", 715, 86);
+		g.setColor(Color.WHITE);
+		g.drawString("Volume: " + Sound.getVolPercent() + "%", 715, 76);
+		// LATER add a cool-looking volume slider to replace boring text percentages
 
 		manager.renderAll(g);
 	}

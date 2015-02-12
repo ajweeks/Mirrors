@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import ca.liqwidice.mirrors.input.Mouse;
+import ca.liqwidice.mirrors.level.Direction;
 import ca.liqwidice.mirrors.level.Laser;
 import ca.liqwidice.mirrors.level.Level;
 
@@ -18,86 +19,54 @@ public class MirrorTile extends Tile {
 		super(Tile.MIRROR_ID, x, y, level);
 	}
 
-	public void update(double delta) {
-		// LATER set direction exiting
+	@Override
+	public void pollInput() {
 		if (Mouse.leftClicked && Mouse.isInside(this)) switchDirection();
 	}
 
+	@Override
+	public void update(double delta) {
+		
+	}
+
+	@Override
 	public void render(int x, int y, Graphics g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
 		g.setColor(Color.GRAY);
-		if (direction == FS) g.drawLine(x, y, x + WIDTH, y + WIDTH);
-		else g.drawLine(x, y + WIDTH, x + WIDTH, y);
+		if (direction == FS) g.drawLine(x, y + WIDTH, x + WIDTH, y);
+		else if (direction == BS) g.drawLine(x, y, x + WIDTH, y + WIDTH);
 
-		if (laser != null) {
-			g.setColor(laser.getColour());
-
-			switch (laser.getDirEntering()) {
-			case NORTH:
-				// Top to center
-				g.drawLine(x + WIDTH / 2, y, x + WIDTH / 2, y + WIDTH / 2);
-				if (this.direction == FS) {
-					// Left to center
-					g.drawLine(x, y + WIDTH / 2, x + WIDTH / 2, y + WIDTH / 2);
-				} else {
-					// Right to center
-					g.drawLine(x + WIDTH / 2, y + WIDTH / 2, x + WIDTH, y + WIDTH / 2);
-				}
-				break;
-			case SOUTH:
-				// Bottom to center
-				g.drawLine(x + WIDTH / 2, y + WIDTH / 2, x + WIDTH / 2, y + WIDTH);
-				if (this.direction == FS) {
-					//Right to center
-					g.drawLine(x + WIDTH / 2, y + WIDTH / 2, x + WIDTH, y + WIDTH / 2);
-				} else {
-					// Left to center
-					g.drawLine(x, y + WIDTH / 2, x + WIDTH / 2, y + WIDTH / 2);
-				}
-				break;
-			case EAST:
-				// Left to center
-				g.drawLine(x, y + WIDTH / 2, x + WIDTH / 2, y + WIDTH / 2);
-				if (this.direction == FS) {
-					// Top to center
-					g.drawLine(x + WIDTH / 2, y, x + WIDTH / 2, y + WIDTH / 2);
-				} else {
-					// Bottom to center
-					g.drawLine(x + WIDTH / 2, y + WIDTH / 2, x + WIDTH / 2, y + WIDTH);
-				}
-				break;
-			case WEST:
-				//Right to center
-				g.drawLine(x + WIDTH / 2, y + WIDTH / 2, x + WIDTH, y + WIDTH / 2);
-				if (this.direction == FS) {
-					// Bottom to center
-					g.drawLine(x + WIDTH / 2, y + WIDTH / 2, x + WIDTH / 2, y + WIDTH);
-				} else {
-					// Top to center
-					g.drawLine(x + WIDTH / 2, y, x + WIDTH / 2, y + WIDTH / 2);
-				}
-				break;
-			case NULL:
-				break;
-			}
-
-			if (this.laser != Laser.NULL) {
-				this.laser.render(x, y, g);
-			}
+		if (this.laser != Laser.NULL) {
+			this.laser.render(x, y, g);
 		}
 	}
 
 	@Override
 	public void addLaser(Laser laser) {
-		// TODO Auto-generated method stub
+		this.laser = laser;
+		if(this.laser == Laser.NULL) return;
 		
+		Direction exiting = Direction.NULL;
+		if (this.direction == FS) {
+			if (laser.getDirEntering() == Direction.NORTH) exiting = Direction.WEST;
+			else if (laser.getDirEntering() == Direction.WEST) exiting = Direction.NORTH;
+			else if (laser.getDirEntering() == Direction.EAST) exiting = Direction.SOUTH;
+			else if (laser.getDirEntering() == Direction.SOUTH) exiting = Direction.EAST;
+		} else if (this.direction == BS) {
+			if (laser.getDirEntering() == Direction.NORTH) exiting = Direction.EAST;
+			else if (laser.getDirEntering() == Direction.EAST) exiting = Direction.NORTH;
+			else if (laser.getDirEntering() == Direction.WEST) exiting = Direction.SOUTH;
+			else if (laser.getDirEntering() == Direction.SOUTH) exiting = Direction.WEST;
+		}
+		this.laser.setDirExiting(exiting);
 	}
-	
+
 	@Override
 	public void reset() {
 		this.direction = FS;
+		this.laser = Laser.NULL;
 	}
 
 	public void switchDirection() {

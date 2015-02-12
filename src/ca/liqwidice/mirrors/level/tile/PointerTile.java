@@ -12,53 +12,53 @@ import ca.liqwidice.mirrors.level.Level;
 public class PointerTile extends Tile { //Symbolizes a laser pointer, a source of light
 
 	protected Direction direction = Direction.NORTH;
-	private boolean on = true;
+	private boolean on;
 	private Color colour;
 
 	public PointerTile(int x, int y, Color colour, Level level) {
 		super(Tile.POINTER_ID, x, y, level);
 		this.colour = colour;
 		this.laser = new Laser(Direction.NORTH, colour);
+		setOn(true);
 	}
 
 	@Override
-	public void update(double delta) {
+	public void pollInput() {
 		if (Mouse.leftClicked && Mouse.isInside(this)) {
-			this.on = !this.on;
-			if (this.on) this.laser = new Laser(Direction.NULL, colour);
-			else this.laser = Laser.NULL;
+			setOn(!this.on);
 		}
 
 		if (Mouse.rightClicked && Mouse.isInside(this)) {
 			this.direction = this.direction.cw();
+			this.laser.setDirExiting(this.direction);
 		}
+	}
 
+	@Override
+	public void update(double delta) {
 		// Start the updating chain
-
-		// FIXME put this in a method that only gets called when the game board gets clicked
-
 		boolean[] checkedTiles = new boolean[level.height * level.width]; /* LATER add a boolean value to each tile instead of creating this every frame (possibly multiple times!) */
 		Direction nextDir = direction; // the direction towards the next tile (which is initially our direction)
 		int xx = x + nextDir.offset[0];
 		int yy = y + nextDir.offset[1];
+
 		do {
-			if (xx < 0 || xx >= level.width || yy < 0 || yy >= level.height) {
-				break; // The next direction is leading us into the wall
-			}
-			// iterate throughout the grid instead of going to each individual tile
-			if (checkedTiles[xx + yy * level.width] == true) return; // we've already checked this tile
+			if (xx < 0 || xx >= level.width || yy < 0 || yy >= level.height) break; // The next direction is leading us into the wall
+
+			if (checkedTiles[xx + yy * level.width] == true) return; // we've already checked this tile (this line avoids infinite loops)
 			else checkedTiles[xx + yy * level.width] = true;
 
 			Tile nextTile = level.getTile(xx, yy); // get the tile to be updated
 			if (nextTile == null) return; // we hit a wall
 
-			if (this.on) nextTile.addLaser(new Laser(nextDir.opposite(), laser.getColour()));
-			else nextTile.addLaser(Laser.NULL);
-
-			if (nextTile.laser != Laser.NULL) {
-				nextDir = nextTile.laser.getDirExiting();
+			if (this.on) {
+				// Find the next direction *after* setting the new laser object
+				nextTile.addLaser(new Laser(nextDir.opposite(), laser.getColour()));
+				nextDir = nextTile.laser.getDirExiting(); 
 			} else {
-				nextDir = Direction.NULL;
+				// Find the next direction *before* setting the new laser object (or else we won't be able to remove lasers properly)
+				nextDir = nextTile.laser.getDirExiting();
+				nextTile.addLaser(Laser.NULL);
 			}
 
 			xx = nextTile.getX() + nextDir.offset[0];
@@ -96,13 +96,19 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 			g.fillPolygon(new Polygon(new int[] { x + x2, x + x2, x + x1 }, new int[] { y + y1, y + y2,
 					y + (y2 - y1) / 2 + y1 }, 3));
 			break;
-		default:
+		case NULL:
 			break;
 		}
 
 		if (this.laser != Laser.NULL) {
 			this.laser.render(x, y, g);
 		}
+	}
+
+	private void setOn(boolean on) {
+		this.on = on;
+		if (this.on) this.laser = new Laser(Direction.NULL, direction, colour);
+		else this.laser = Laser.NULL;
 	}
 
 	@Override
@@ -115,6 +121,7 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 		this.direction = Direction.NORTH;
 		this.on = true;
 		this.laser = new Laser(Direction.NULL, colour);
+		this.laser.setDirExiting(this.direction);
 	}
 
 	public Direction getDirection() {

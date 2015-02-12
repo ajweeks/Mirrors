@@ -28,7 +28,16 @@ public class Level {
 	public void update(double delta) {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				tiles[y][x].update(delta);
+				tiles[y][x].pollInput();
+			}
+		}
+
+		if (Mouse.leftClicked || Mouse.rightClicked) {
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					tiles[y][x].update(delta);
+					;
+				}
 			}
 		}
 	}
@@ -67,7 +76,7 @@ public class Level {
 			}
 		}
 		this.tiles = levels[level].clone();
-		// TODO completed = false; ? 
+		completed = false;
 	}
 
 	public void setCompleted(boolean completed) {
