@@ -60,11 +60,11 @@ public class Levels {
 		{ 1, 0, 0, 0, 0, 3}
 	},
 	{
-		{ 0, 0, 2, 0, 0, 2},
+		{ 0, 0, 2, 0, 2, 0},
 		{ 0, 0, 0, 0, 0, 0},
-		{ 1, 0, 2, 0, 0, 0},
+		{ 2, 0, 3, 0, 0, 2},
 		{ 0, 0, 0, 0, 0, 0},
-		{ 0, 0, 0, 0, 0, 2}
+		{ 0, 0, 2, 0, 1, 0}
 	}};
 	//@formatter:on
 
@@ -74,16 +74,16 @@ public class Levels {
 			for (int y = 0; y < tiles[l].length; y++) {
 				for (int x = 0; x < tiles[l][y].length; x++) {
 					switch (tiles[l][y][x]) {
-					case Tile.BLANK_ID:
+					case 0:
 						result[l][y][x] = new BlankTile(x, y, level);
 						break;
-					case Tile.MIRROR_ID:
+					case 1:
 						result[l][y][x] = new MirrorTile(x, y, level);
 						break;
-					case Tile.POINTER_ID:
+					case 2:
 						result[l][y][x] = new PointerTile(x, y, Color.GREEN, level);
 						break;
-					case Tile.RECEPTOR_ID:
+					case 3:
 						result[l][y][x] = new ReceptorTile(x, y, level);
 						break;
 					default:

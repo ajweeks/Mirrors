@@ -3,6 +3,7 @@ package ca.liqwidice.mirrors.level.tile;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.util.ArrayList;
 
 import ca.liqwidice.mirrors.input.Mouse;
 import ca.liqwidice.mirrors.level.Direction;
@@ -16,28 +17,35 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 	private Color colour;
 
 	public PointerTile(int x, int y, Color colour, Level level) {
-		super(Tile.POINTER_ID, x, y, level);
+		super(x, y, level);
 		this.colour = colour;
-		this.laser = new Laser(Direction.NORTH, colour);
-		setOn(true);
+		this.lasers = new ArrayList<>();
+		this.on = true;
+		this.lasers.add(new Laser(Direction.NULL, direction, colour));
 	}
 
 	@Override
 	public void pollInput() {
 		if (Mouse.leftClicked && Mouse.isInside(this)) {
-			setOn(!this.on);
+			this.on = !this.on;
+			if (this.on) this.lasers.add(new Laser(Direction.NULL, direction, colour));
+			else removeAllLasers();
 		}
 
 		if (Mouse.rightClicked && Mouse.isInside(this)) {
 			this.direction = this.direction.cw();
-			this.laser.setDirExiting(this.direction);
+			if (this.lasers.size() > 0) this.lasers.get(0).setDirExiting(this.direction);
 		}
 	}
 
 	@Override
 	public void update(double delta) {
+		if (on) {
+			if (lasers.size() == 0) this.lasers.add(new Laser(Direction.NULL, direction, colour));
+		} else return;// If we aren't shining light, there's no reason to update anything
+
 		// Start the updating chain
-		boolean[] checkedTiles = new boolean[level.height * level.width]; /* LATER add a boolean value to each tile instead of creating this every frame (possibly multiple times!) */
+		boolean[] checkedTiles = new boolean[level.height * level.width];
 		Direction nextDir = direction; // the direction towards the next tile (which is initially our direction)
 		int xx = x + nextDir.offset[0];
 		int yy = y + nextDir.offset[1];
@@ -49,15 +57,19 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 			else checkedTiles[xx + yy * level.width] = true;
 
 			Tile nextTile = level.getTile(xx, yy); // get the tile to be updated
-			if (nextTile == null) return; // we hit a wall
+			if (nextTile == null) break; // we hit a wall
 
 			if (this.on) {
 				// Find the next direction *after* setting the new laser object
-				nextTile.addLaser(new Laser(nextDir.opposite(), laser.getColour()));
-				nextDir = nextTile.laser.getDirExiting(); 
+				if (nextTile instanceof PointerTile) { // Add all other opaque tiles here
+					break;
+				} else {
+					nextTile.addLaser(new Laser(nextDir.opposite(), colour));
+					nextDir = nextTile.lasers.get(lasers.size() - 1).getDirExiting();
+				}
 			} else {
 				// Find the next direction *before* setting the new laser object (or else we won't be able to remove lasers properly)
-				nextDir = nextTile.laser.getDirExiting();
+				nextDir = nextTile.lasers.get(lasers.size() - 1).getDirExiting();
 				nextTile.addLaser(Laser.NULL);
 			}
 
@@ -100,28 +112,22 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 			break;
 		}
 
-		if (this.laser != Laser.NULL) {
-			this.laser.render(x, y, g);
+		for (Laser l : lasers) {
+			l.render(x, y, g);
 		}
-	}
-
-	private void setOn(boolean on) {
-		this.on = on;
-		if (this.on) this.laser = new Laser(Direction.NULL, direction, colour);
-		else this.laser = Laser.NULL;
 	}
 
 	@Override
 	public void addLaser(Laser laser) {
-		// Obviously we aren't going to add a laser to this, WE ARE THE LASER SOURCE
+
 	}
 
 	@Override
 	public void reset() {
 		this.direction = Direction.NORTH;
 		this.on = true;
-		this.laser = new Laser(Direction.NULL, colour);
-		this.laser.setDirExiting(this.direction);
+		this.lasers.add(new Laser(Direction.NULL, direction, colour));
+		update(1.0d);
 	}
 
 	public Direction getDirection() {

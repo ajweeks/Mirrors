@@ -2,17 +2,13 @@ package ca.liqwidice.mirrors.level.tile;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.ArrayList;
 
 import ca.liqwidice.mirrors.level.Laser;
 import ca.liqwidice.mirrors.level.Level;
 
 /** Represents one square on the game board */
 public abstract class Tile {
-	public static final int BLANK_ID = 0; // LATER make this an enum
-	public static final int MIRROR_ID = 1;
-	public static final int POINTER_ID = 2;
-	public static final int RECEPTOR_ID = 3;
-
 	protected static Image imgBlank = null;
 	protected static Image imgMirror = null;
 	protected static Image imgPointer = null;
@@ -28,50 +24,40 @@ public abstract class Tile {
 	protected int x, y;
 	protected Level level;
 	protected Image image;
-	protected int id;
-	protected Laser laser; // stores this tile's laser object (there can only be one, for now at least)
+	protected ArrayList<Laser> lasers; // stores this tile's laser objects
 
-	public Tile(int id, int x, int y, Level level) {
-		this.id = id;
+	public Tile(int x, int y, Level level) {
 		this.x = x;
 		this.y = y;
 		this.level = level;
-		this.laser = Laser.NULL;
+		this.lasers = new ArrayList<>();
 	}
 
-	//	/** Returns whether or not Tile t has a laser that is  */
-	//	protected boolean isShiningAtUs(Tile t) {
-	//		if (t.laser == null) return false;
-	//		Direction towardsUsFromtThem = t.y < this.y ? Direction.SOUTH : t.y > this.y ? Direction.NORTH
-	//				: t.x < this.x ? Direction.EAST : Direction.WEST;
-	//		if (t.laser.getDirExiting() == towardsUsFromtThem) return true;
-	//		return false;
-	//	}
+	public void pollInput() {} // gets called every frame
 
-	protected Tile[] getNeighbors() {
-		Tile[] neighbors = new Tile[4];
-
-		neighbors[0] = level.getTile(x, y - 1);
-		neighbors[1] = level.getTile(x + 1, y);
-		neighbors[2] = level.getTile(x, y + 1);
-		neighbors[3] = level.getTile(x - 1, y);
-
-		return neighbors;
-	}
-
-	public abstract void pollInput(); // gets called every frame
-
-	public abstract void update(double delta); // gets called whenever there is input
+	public void update(double delta) {} // gets called whenever there is a mouse click
 
 	// LATER add tick() method for animations?
-	
+
 	public abstract void render(int x, int y, Graphics g);
 
+	public abstract void addLaser(Laser laser);
+
 	public void reset() {
-		this.laser = Laser.NULL;
+		this.lasers = new ArrayList<>();
 	}
 
-	public abstract void addLaser(Laser laser);
+	public void removeLaser(Laser laser) {
+		if (this.lasers.contains(laser)) {
+			this.lasers.remove(laser);
+		} else {
+			System.err.println("Attempt to remove a laser that doesn't exist! " + laser);
+		}
+	}
+
+	public void removeAllLasers() {
+		lasers.removeAll(lasers);
+	}
 
 	public int getX() {
 		return x;

@@ -7,11 +7,9 @@ import ca.liqwidice.mirrors.level.tile.Tile;
 
 public class Laser {
 
-	public static final Laser NULL = new Laser(Direction.NULL, Direction.NULL,  Color.BLACK);
+	public static final Laser NULL = new Laser(Direction.NULL, Direction.NULL, Color.BLACK);
 
 	private static int BEAM_WIDTH = 15;
-
-	// LATER allow squares to have multiple lasers entering/exiting them without using 4 different laser objects)
 
 	private Direction entering; // The side of the mirror that the laser is entering on (Should only be Direction.NULL on tiles that emit lasers (just pointers atm))
 	private Direction exiting; // The side of the mirror that the laser is coming out of (Direction.NULL if it doesn't exit because it is being blocked or absorbed)

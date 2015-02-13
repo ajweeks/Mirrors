@@ -18,8 +18,8 @@ public class ReceptorTile extends Tile {
 	private Direction direction = Direction.NORTH; // The direction our receptor is facing LATER add different types of receptors (2-way, colour coded, all way, etc.)
 
 	public ReceptorTile(int x, int y, Level level) {
-		super(Tile.RECEPTOR_ID, x, y, level);
-		setOn(false);
+		super(x, y, level);
+		this.on = false;
 	}
 
 	@Override
@@ -28,19 +28,23 @@ public class ReceptorTile extends Tile {
 			this.direction = this.direction.cw();
 		}
 	}
-	
+
 	@Override
 	public void update(double delta) {
-
-
-		if (this.laser != Laser.NULL) {
-			setOn(this.laser.getDirEntering() == this.direction);
+		this.on = false;
+		for (int i = 0; i < lasers.size(); i++) {
+			if (lasers.get(i).getDirEntering() == this.direction) {
+				this.on = true;
+			}
+		}
+		if (!this.on) {
+			removeAllLasers();
 		}
 	}
 
 	@Override
 	public void render(int x, int y, Graphics g) {
-		if (on) g.setColor(Color.GREEN);
+		if (this.on) g.setColor(Color.GREEN);
 		else g.setColor(Color.RED);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
@@ -72,22 +76,18 @@ public class ReceptorTile extends Tile {
 
 	@Override
 	public void addLaser(Laser laser) {
-		this.laser = laser;
+		this.lasers.add(laser);
+		// Note: don't assign the exiting direction to anything, keep it as NULL so the laser will stop here
 	}
 
 	@Override
 	public void reset() {
 		this.direction = Direction.NORTH;
-		setOn(false);
+		this.on = false;
+		removeAllLasers();
 	}
 
 	public boolean isOn() {
 		return on;
 	}
-
-	private void setOn(boolean on) {
-		this.on = on;
-		if (this.on == false) this.laser = Laser.NULL;
-	}
-
 }

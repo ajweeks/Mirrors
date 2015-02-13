@@ -16,17 +16,12 @@ public class MirrorTile extends Tile {
 	protected int direction = FS;
 
 	public MirrorTile(int x, int y, Level level) {
-		super(Tile.MIRROR_ID, x, y, level);
+		super(x, y, level);
 	}
 
 	@Override
 	public void pollInput() {
 		if (Mouse.leftClicked && Mouse.isInside(this)) switchDirection();
-	}
-
-	@Override
-	public void update(double delta) {
-		
 	}
 
 	@Override
@@ -38,16 +33,16 @@ public class MirrorTile extends Tile {
 		if (direction == FS) g.drawLine(x, y + WIDTH, x + WIDTH, y);
 		else if (direction == BS) g.drawLine(x, y, x + WIDTH, y + WIDTH);
 
-		if (this.laser != Laser.NULL) {
-			this.laser.render(x, y, g);
+		for (Laser l : lasers) {
+			l.render(x, y, g);
 		}
 	}
 
 	@Override
 	public void addLaser(Laser laser) {
-		this.laser = laser;
-		if(this.laser == Laser.NULL) return;
-		
+		this.lasers.add(laser);
+
+		// determine the exiting direction
 		Direction exiting = Direction.NULL;
 		if (this.direction == FS) {
 			if (laser.getDirEntering() == Direction.NORTH) exiting = Direction.WEST;
@@ -60,16 +55,17 @@ public class MirrorTile extends Tile {
 			else if (laser.getDirEntering() == Direction.WEST) exiting = Direction.SOUTH;
 			else if (laser.getDirEntering() == Direction.SOUTH) exiting = Direction.WEST;
 		}
-		this.laser.setDirExiting(exiting);
+		this.lasers.get(lasers.size() - 1).setDirExiting(exiting);
 	}
 
 	@Override
 	public void reset() {
 		this.direction = FS;
-		this.laser = Laser.NULL;
+		removeAllLasers();
 	}
 
 	public void switchDirection() {
 		this.direction = (this.direction + 1) % 2; // alternate between 0 and 1
+		// LATER update the lasers (from here?)
 	}
 }

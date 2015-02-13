@@ -23,6 +23,11 @@ public class Level {
 		this.level = level;
 		this.height = tiles.length;
 		this.width = tiles[0].length;
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				tiles[y][x].update(1.0d);
+			}
+		}
 	}
 
 	public void update(double delta) {
@@ -35,8 +40,13 @@ public class Level {
 		if (Mouse.leftClicked || Mouse.rightClicked) {
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
+					tiles[y][x].removeAllLasers();
+				}
+			}
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
 					tiles[y][x].update(delta);
-					;
 				}
 			}
 		}
