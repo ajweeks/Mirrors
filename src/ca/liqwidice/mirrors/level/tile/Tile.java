@@ -9,15 +9,6 @@ import ca.liqwidice.mirrors.level.Level;
 
 /** Represents one square on the game board */
 public abstract class Tile {
-	protected static Image imgBlank = null;
-	protected static Image imgMirror = null;
-	protected static Image imgPointer = null;
-	protected static Image imgReceptor = null;
-	protected static Image imgLaserR = null;
-
-	protected static Image imgBuffer = null;
-	protected static Image imgLouder = null;
-	protected static Image imgQuieter = null;
 
 	public static final int WIDTH = 107;
 
@@ -42,10 +33,6 @@ public abstract class Tile {
 	public abstract void render(int x, int y, Graphics g);
 
 	public abstract void addLaser(Laser laser);
-
-	public void reset() {
-		this.lasers = new ArrayList<>();
-	}
 
 	public void removeLaser(Laser laser) {
 		if (this.lasers.contains(laser)) {

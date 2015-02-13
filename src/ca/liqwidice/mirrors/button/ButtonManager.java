@@ -3,7 +3,6 @@ package ca.liqwidice.mirrors.button;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-
 public class ButtonManager {
 	ArrayList<Button> buttons;
 
@@ -36,8 +35,9 @@ public class ButtonManager {
 		return Button.NULL;
 	}
 
+	/** Returns the number of buttons this manager is in control of */
 	public int getSize() {
 		return buttons.size();
 	}
-	
+
 }

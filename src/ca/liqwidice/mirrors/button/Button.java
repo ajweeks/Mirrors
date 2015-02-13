@@ -17,7 +17,8 @@ public class Button {
 	public Color bgCol, hovCol, textCol;
 	public String text;
 
-	public Button(int x, int y, int width, int height, String text, boolean drawText, Color bgCol, Color hovCol, Color textCol) {
+	public Button(int x, int y, int width, int height, String text, boolean drawText, Color bgCol,
+			Color textCol) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -27,28 +28,26 @@ public class Button {
 		this.hover = false;
 		this.enabled = true;
 		this.bgCol = bgCol;
-		this.hovCol = hovCol;
+		this.hovCol = bgCol.darker();
 		this.textCol = textCol;
 	}
-	
+
 	public Button(int x, int y, int width, int height, String text, boolean drawText) {
-		this(x, y, width, height, text, drawText, Colours.purple, Colours.purpleHov, Color.WHITE);
+		this(x, y, width, height, text, drawText, Colours.purple, Color.WHITE);
 	}
 
 	public Button(int x, int y, int width, int height, String text) {
 		this(x, y, width, height, text, true);
 	}
 
-	public void setColours(Color bgCol, Color hovCol, Color textCol) {
+	public void setColours(Color bgCol, Color textCol) {
 		this.bgCol = bgCol;
-		this.hovCol = hovCol;
-		this.textCol = textCol;		
+		this.hovCol = bgCol.darker();
+		this.textCol = textCol;
 	}
-	
-	public void render(Graphics g) {
-		if (enabled == false) g.setColor(Colours.disabledButton);
-		else if (hover) g.setColor(hovCol);
-		else g.setColor(bgCol);
+
+	public void render(Graphics g, Color colour, Color textCol) {
+		g.setColor(colour);
 		g.fillRect(x, y, width, height);
 		if (drawText) {
 			g.setColor(textCol);
@@ -57,6 +56,15 @@ public class Button {
 			int y = this.y + height / 2 - g.getFontMetrics().getHeight() / 2;
 			g.drawString(text, x, y + 15);
 		}
+	}
+
+	public void render(Graphics g) {
+		Color colour;
+		if (enabled == false) colour = Colours.disabledButton;
+		else if (hover) colour = hovCol;
+		else colour = bgCol;
+
+		render(g, colour, textCol);
 	}
 
 	public void update(double delta) {
@@ -69,7 +77,7 @@ public class Button {
 			clicked = false;
 		}
 	}
-	
+
 	public void SetDrawText(boolean drawText) {
 		this.drawText = drawText;
 	}

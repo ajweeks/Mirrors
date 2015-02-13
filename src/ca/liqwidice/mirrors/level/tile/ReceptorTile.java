@@ -15,12 +15,15 @@ import ca.liqwidice.mirrors.level.Level;
 public class ReceptorTile extends Tile {
 
 	private boolean on; //LATER make this an integer, representing all inputs 
-	private Direction direction = Direction.NORTH; // The direction our receptor is facing LATER add different types of receptors (2-way, colour coded, all way, etc.)
+	private Direction direction; // The direction our receptor is facing LATER add different types of receptors (2-way, colour coded, all way, etc.)
 
-	public ReceptorTile(int x, int y, Level level) {
+	public ReceptorTile(int x, int y, int direction, Level level) {
 		super(x, y, level);
+		this.direction = Direction.decode(direction);
 		this.on = false;
 	}
+
+	// LATER add lockable field to prevent the player from rotating this at certain times
 
 	@Override
 	public void pollInput() {
@@ -44,8 +47,8 @@ public class ReceptorTile extends Tile {
 
 	@Override
 	public void render(int x, int y, Graphics g) {
-		if (this.on) g.setColor(Color.GREEN);
-		else g.setColor(Color.RED);
+		if (this.on) g.setColor(Color.CYAN);
+		else g.setColor(Color.GRAY);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
 		g.setColor(Color.WHITE);
@@ -78,13 +81,6 @@ public class ReceptorTile extends Tile {
 	public void addLaser(Laser laser) {
 		this.lasers.add(laser);
 		// Note: don't assign the exiting direction to anything, keep it as NULL so the laser will stop here
-	}
-
-	@Override
-	public void reset() {
-		this.direction = Direction.NORTH;
-		this.on = false;
-		removeAllLasers();
 	}
 
 	public boolean isOn() {

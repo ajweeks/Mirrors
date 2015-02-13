@@ -61,7 +61,8 @@ public class MainMenuState extends BasicState {
 	@Override
 	public void render(Graphics g) {
 		g.setColor(Color.WHITE);
-		g.drawString("Volume: " + Sound.getVolPercent() + "%", 715, 76);
+		if (Sound.SELECT.available) g.drawString("Volume: " + Sound.getVolPercent() + "%", 715, 76);
+		else g.drawString("Couldn't load sounds! :(", 705, 76);
 		// LATER add a cool-looking volume slider to replace boring text percentages
 
 		manager.renderAll(g);

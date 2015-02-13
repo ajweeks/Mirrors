@@ -1,5 +1,6 @@
 package ca.liqwidice.mirrors.state;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 import ca.liqwidice.mirrors.Colours;
@@ -60,6 +61,13 @@ public class GameState extends BasicState {
 		g.setColor(Colours.sidebar);
 		g.fillRect(0, 0, 150, Game.SIZE.height);
 
+		g.setColor(Color.MAGENTA);
+		g.fillRect(0, 0, Level.xo, 30);
+		
+		g.setColor(Color.WHITE);
+		g.setFont(Game.font32);
+		g.drawString("Level " + level.level, 10, 25);
+		
 		manager.renderAll(g);
 
 		level.render(g);

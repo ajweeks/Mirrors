@@ -13,10 +13,11 @@ public class MirrorTile extends Tile {
 	public static final int FS = 0; //the mirror is angled like a forward slash, from the SW corner to the NE (/)
 	public static final int BS = 1; //the mirror is angled like a backward slash, from the NW corner to the SE (\)
 
-	protected int direction = FS;
+	protected int direction;
 
-	public MirrorTile(int x, int y, Level level) {
+	public MirrorTile(int x, int y, int direction, Level level) {
 		super(x, y, level);
+		this.direction = direction;
 	}
 
 	@Override
@@ -56,12 +57,6 @@ public class MirrorTile extends Tile {
 			else if (laser.getDirEntering() == Direction.SOUTH) exiting = Direction.WEST;
 		}
 		this.lasers.get(lasers.size() - 1).setDirExiting(exiting);
-	}
-
-	@Override
-	public void reset() {
-		this.direction = FS;
-		removeAllLasers();
 	}
 
 	public void switchDirection() {

@@ -16,12 +16,13 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 	private boolean on;
 	private Color colour;
 
-	public PointerTile(int x, int y, Color colour, Level level) {
+	public PointerTile(int x, int y, int direction, Color colour, Level level) {
 		super(x, y, level);
 		this.colour = colour;
 		this.lasers = new ArrayList<>();
 		this.on = true;
-		this.lasers.add(new Laser(Direction.NULL, direction, colour));
+		this.direction = Direction.decode(direction);
+		this.lasers.add(new Laser(Direction.NULL, this.direction, this.colour));
 	}
 
 	@Override
@@ -76,15 +77,14 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 
 	@Override
 	public void render(int x, int y, Graphics g) {
-		if (on) g.setColor(Color.ORANGE);
-		else g.setColor(Color.GRAY);
+		g.setColor(Color.WHITE);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
-		g.setColor(Color.WHITE);
+		g.setColor(Color.DARK_GRAY);
 		int x1 = 15;
-		int x2 = 85;
+		int x2 = 91;
 		int y1 = 15;
-		int y2 = 85;
+		int y2 = 91;
 		switch (direction) {
 		case NORTH:
 			g.fillPolygon(new Polygon(new int[] { x + x1, x + x2, x + (x2 - x1) / 2 + x1 }, new int[] { y + y2, y + y2,
@@ -114,14 +114,6 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 	@Override
 	public void addLaser(Laser laser) {
 
-	}
-
-	@Override
-	public void reset() {
-		this.direction = Direction.NORTH;
-		this.on = true;
-		this.lasers.add(new Laser(Direction.NULL, direction, colour));
-		update(1.0d);
 	}
 
 	public Direction getDirection() {

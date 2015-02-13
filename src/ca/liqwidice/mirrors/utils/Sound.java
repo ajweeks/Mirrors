@@ -13,13 +13,14 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public enum Sound {
 	SELECT("res/sounds/select.wav");
 
-	public static float volume = -9.0f;
+	public static float volume = -15.0f;
 	public final static float MAX_VOLUME = 6.0f;
 	public final static float MIN_VOLUME = -24.0f;
 
 	private Clip clip;
 	private FloatControl control;
-
+	public boolean available = true;
+	
 	Sound(String filename) {
 		try {
 			AudioInputStream inStream = AudioSystem.getAudioInputStream(new File(filename));
@@ -27,9 +28,8 @@ public enum Sound {
 			clip.open(inStream);
 			control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
-			e.printStackTrace();
+			available = false;
 		}
-
 	}
 
 	public static void louder() {
@@ -46,7 +46,7 @@ public enum Sound {
 	}
 
 	public void play() {
-		if (volume <= MIN_VOLUME) return; //No sound
+		if (!available || volume <= MIN_VOLUME) return; //No sound
 		control.setValue((float) volume);
 
 		if (clip.isRunning()) clip.stop();
