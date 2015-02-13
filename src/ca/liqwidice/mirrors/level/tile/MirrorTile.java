@@ -66,6 +66,5 @@ public class MirrorTile extends Tile {
 
 	public void switchDirection() {
 		this.direction = (this.direction + 1) % 2; // alternate between 0 and 1
-		// LATER update the lasers (from here?)
 	}
 }

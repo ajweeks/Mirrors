@@ -5,11 +5,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Keyboard implements KeyListener {
-	
+
 	public static boolean esc; // is true if the ESC key is down this frame and wasn't down last frame
 	private static boolean ctrl;
 	public static boolean ctrl_w;
-	
+
 	public Keyboard(Canvas canvas) {
 		canvas.addKeyListener(this);
 	}
@@ -20,9 +20,9 @@ public class Keyboard implements KeyListener {
 	}
 
 	private void keyChanged(KeyEvent event, boolean down) {
-		switch(event.getKeyCode()) {
+		switch (event.getKeyCode()) {
 		case KeyEvent.VK_ESCAPE:
-			esc = down; // LATER figure out how to make clicking work
+			esc = down;
 			break;
 		case KeyEvent.VK_CONTROL:
 			ctrl = down;
@@ -32,7 +32,7 @@ public class Keyboard implements KeyListener {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		keyChanged(e, true);

@@ -63,11 +63,10 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 			if (nextTile instanceof PointerTile) { // Add all other opaque tiles here
 				break;
 			}
-
 			// Find the next direction *after* setting the new laser object
 			nextTile.addLaser(new Laser(nextDir.opposite(), colour));
-			nextDir = nextTile.lasers.get(0).getDirExiting();
-
+			nextDir = nextTile.lasers.get(nextTile.lasers.size() - 1).getDirExiting();
+			
 			xx = nextTile.getX() + nextDir.offset[0];
 			yy = nextTile.getY() + nextDir.offset[1];
 
