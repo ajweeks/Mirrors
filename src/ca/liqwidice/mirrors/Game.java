@@ -66,8 +66,8 @@ public class Game extends JFrame implements Runnable {
 	}
 
 	private void update(double delta) {
-		if(Keyboard.ctrl_w) stopGame();
-		if(Keyboard.esc) enterPreviousState();
+		if (Keyboard.ctrl_w) stopGame();
+		if (Keyboard.esc) enterPreviousState();
 		sm.update(delta);
 		Mouse.update();
 		Keyboard.update();
@@ -111,8 +111,14 @@ public class Game extends JFrame implements Runnable {
 
 			update(delta);
 			frames++;
-			//LATER make a better time loop
 			render();
+
+			try {
+				//LATER make a better time loop
+				Thread.sleep(15);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		stopGame();
 		System.exit(0);

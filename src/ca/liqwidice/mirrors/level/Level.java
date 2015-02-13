@@ -3,6 +3,7 @@ package ca.liqwidice.mirrors.level;
 import java.awt.Graphics;
 
 import ca.liqwidice.mirrors.input.Mouse;
+import ca.liqwidice.mirrors.level.tile.PointerTile;
 import ca.liqwidice.mirrors.level.tile.Tile;
 
 public class Level {
@@ -46,7 +47,17 @@ public class Level {
 
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
-					tiles[y][x].update(delta);
+					if (tiles[y][x] instanceof PointerTile) {
+						tiles[y][x].update(delta);
+					}
+				}
+			}
+			
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					if (tiles[y][x] instanceof PointerTile == false) {
+						tiles[y][x].update(delta);
+					}
 				}
 			}
 		}

@@ -53,25 +53,20 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 		do {
 			if (xx < 0 || xx >= level.width || yy < 0 || yy >= level.height) break; // The next direction is leading us into the wall
 
+			// LATER figure out another way to prevent infinite loops while still allowing lasers to bounce off both sides of a mirror
 			if (checkedTiles[xx + yy * level.width] == true) return; // we've already checked this tile (this line avoids infinite loops)
 			else checkedTiles[xx + yy * level.width] = true;
 
 			Tile nextTile = level.getTile(xx, yy); // get the tile to be updated
 			if (nextTile == null) break; // we hit a wall
 
-			if (this.on) {
-				// Find the next direction *after* setting the new laser object
-				if (nextTile instanceof PointerTile) { // Add all other opaque tiles here
-					break;
-				} else {
-					nextTile.addLaser(new Laser(nextDir.opposite(), colour));
-					nextDir = nextTile.lasers.get(lasers.size() - 1).getDirExiting();
-				}
-			} else {
-				// Find the next direction *before* setting the new laser object (or else we won't be able to remove lasers properly)
-				nextDir = nextTile.lasers.get(lasers.size() - 1).getDirExiting();
-				nextTile.addLaser(Laser.NULL);
+			if (nextTile instanceof PointerTile) { // Add all other opaque tiles here
+				break;
 			}
+
+			// Find the next direction *after* setting the new laser object
+			nextTile.addLaser(new Laser(nextDir.opposite(), colour));
+			nextDir = nextTile.lasers.get(0).getDirExiting();
 
 			xx = nextTile.getX() + nextDir.offset[0];
 			yy = nextTile.getY() + nextDir.offset[1];
