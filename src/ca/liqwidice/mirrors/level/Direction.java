@@ -1,13 +1,15 @@
 package ca.liqwidice.mirrors.level;
 
 public enum Direction {
-	NORTH(new int[] { 0, -1 }), SOUTH(new int[] { 0, 1 }), EAST(new int[] { 1, 0 }), WEST(new int[] { -1, 0 }), NULL(
-			new int[] { 0, 0 });
+	NORTH(new int[] { 0, -1 }, "N"), SOUTH(new int[] { 0, 1 }, "S"), EAST(new int[] { 1, 0 }, "E"), WEST(new int[] {
+			-1, 0 }, "W"), NULL(new int[] { 0, 0 }, "~");
 
 	public int[] offset;
+	public String string; // TODO remove this?
 
-	Direction(int[] offset) {
+	Direction(int[] offset, String string) {
 		this.offset = offset;
+		this.string = string;
 	}
 
 	public Direction opposite() {

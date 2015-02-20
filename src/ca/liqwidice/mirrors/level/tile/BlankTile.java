@@ -7,6 +7,7 @@ import ca.liqwidice.mirrors.level.Laser;
 import ca.liqwidice.mirrors.level.Level;
 
 public class BlankTile extends Tile {
+	private static final long serialVersionUID = 1L;
 
 	public BlankTile(int x, int y, Level level) {
 		super(x, y, level);
@@ -26,6 +27,11 @@ public class BlankTile extends Tile {
 	public void addLaser(Laser laser) {
 		this.lasers.add(laser);
 		this.lasers.get(lasers.size() - 1).setDirExiting(laser.getDirEntering().opposite()); // simply let it pass through us
+	}
+
+	@Override
+	public Tile copy() {
+		return new BlankTile(x, y, level);
 	}
 
 }

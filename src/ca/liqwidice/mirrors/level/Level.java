@@ -1,19 +1,20 @@
 package ca.liqwidice.mirrors.level;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import ca.liqwidice.mirrors.input.Mouse;
+import ca.liqwidice.mirrors.level.tile.BlankTile;
 import ca.liqwidice.mirrors.level.tile.PointerTile;
 import ca.liqwidice.mirrors.level.tile.ReceptorTile;
 import ca.liqwidice.mirrors.level.tile.Tile;
 
-public class Level {
+public class Level implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	// How far to offset the rendering of the game grid
 	public static final int xo = 150;
 	public static final int yo = 0;
-
-	public Tile[][][] levels = Levels.getTiles(this); // This object contains all of the levels in the game.. LATER decide if moving this into separate objects would be better
 
 	public Tile[][] tiles;
 	public int width, height;
@@ -21,18 +22,25 @@ public class Level {
 	public boolean completed = false;
 
 	public Level(int level) {
-		this.tiles = Levels.getTiles(this)[level];
+		this.height = 8; // LATER add variably-sized w and h
+		this.width = 10;
+		tiles = new Tile[height][width];
+		for (int y = 0; y < tiles.length; y++) {
+			for (int x = 0; x < tiles[y].length; x++) {
+				tiles[y][x] = new BlankTile(x, y, this); // TEMpORARY line
+			}
+		}
 		this.level = level;
-		this.height = tiles.length;
-		this.width = tiles[0].length;
 		updatePointerTiles(1.0d);
 		updateAllNonPointerTiles(1.0d);
 	}
 
-	public void update(double delta) {
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				tiles[y][x].pollInput(); // poll for input every frame
+	public void update(double delta, boolean levelEditingMode) {
+		if (levelEditingMode == false) {
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					tiles[y][x].pollInput(); // poll for input every frame
+				}
 			}
 		}
 
@@ -40,7 +48,7 @@ public class Level {
 			removeAllLasers();
 			updatePointerTiles(delta);
 			updateAllNonPointerTiles(delta);
-			
+
 			if (allReceptorsOn()) {
 				this.completed = true;
 			} else {
@@ -74,13 +82,6 @@ public class Level {
 			}
 		}
 		return null;
-	}
-
-	public void reset() {
-		this.tiles = Levels.getTiles(this)[level];
-		completed = false;
-		updatePointerTiles(1.0d);
-		updateAllNonPointerTiles(1.0d);
 	}
 
 	private void updateAllNonPointerTiles(double delta) {

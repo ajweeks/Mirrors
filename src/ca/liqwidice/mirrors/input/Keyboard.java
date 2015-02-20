@@ -6,15 +6,19 @@ import java.awt.event.KeyListener;
 
 public class Keyboard implements KeyListener {
 
-	public static boolean esc; // is true if the ESC key is down this frame and wasn't down last frame
+	public static boolean esc;
 	private static boolean ctrl;
 	public static boolean ctrl_w;
+	public static boolean ctrl_e;
+	public static boolean ctrl_e_tt;
 
 	public Keyboard(Canvas canvas) {
 		canvas.addKeyListener(this);
 	}
 
 	public static void update() {
+		if (ctrl_e_tt) ctrl_e = !ctrl_e;
+		ctrl_e_tt = false;
 		esc = false;
 		ctrl_w = false;
 	}
@@ -29,6 +33,9 @@ public class Keyboard implements KeyListener {
 			break;
 		case KeyEvent.VK_W:
 			ctrl_w = down && ctrl;
+			break;
+		case KeyEvent.VK_E:
+			ctrl_e_tt = down && ctrl;
 			break;
 		}
 	}

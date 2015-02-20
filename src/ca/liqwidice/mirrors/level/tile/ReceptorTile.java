@@ -2,6 +2,11 @@ package ca.liqwidice.mirrors.level.tile;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import ca.liqwidice.mirrors.input.Mouse;
 import ca.liqwidice.mirrors.level.Direction;
@@ -13,6 +18,20 @@ import ca.liqwidice.mirrors.level.Level;
  * This particular ReceptorTile can only be activated by lasers entering from one direction, all others are ignored
  */
 public class ReceptorTile extends Tile {
+	private static final long serialVersionUID = 1L;
+
+	public static BufferedImage N, E, S, W;
+
+	static {
+		try {
+			N = ImageIO.read(new File("res/receptorN.png"));
+			E = ImageIO.read(new File("res/receptorE.png"));
+			S = ImageIO.read(new File("res/receptorS.png"));
+			W = ImageIO.read(new File("res/receptorW.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private boolean on; //LATER make this an integer, representing all inputs 
 	private Direction direction; // The direction our receptor is facing LATER add different types of receptors (2-way, colour coded, all way, etc.)
@@ -47,34 +66,27 @@ public class ReceptorTile extends Tile {
 
 	@Override
 	public void render(int x, int y, Graphics g) {
-		if (this.on) g.setColor(Color.CYAN);
-		else g.setColor(Color.GRAY);
+		if (this.on) g.setColor(Color.YELLOW);
+		else g.setColor(Color.WHITE);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
-		g.setColor(Color.WHITE);
 		switch (direction) {
 		case NORTH:
-			g.fillOval(x + 38, y + 10, 30, 30);
+			g.drawImage(N, x, y, null);
 			break;
 		case EAST:
-			g.fillOval(x + 68, y + 38, 30, 30);
+			g.drawImage(E, x, y, null);
 			break;
 		case SOUTH:
-			g.fillOval(x + 38, y + 68, 30, 30);
+			g.drawImage(S, x, y, null);
 			break;
 		case WEST:
-			g.fillOval(x + 15, y + 38, 30, 30);
+			g.drawImage(W, x, y, null);
 			break;
 		case NULL:
 		default:
-			System.err.println("Invalid direction on receptor tile at " + x + ", " + y + ": " + direction.toString());
 			break;
 		}
-
-		// DON'T RENDER THE LASER!! WE ONLY HAVE ONE SO WE KNOW WHEN THE PLAYER HAS WOOONN!!
-		// if (this.laser != Laser.NULL) {
-		//     this.laser.render(x, y, g);
-		// }
 	}
 
 	@Override
@@ -85,5 +97,10 @@ public class ReceptorTile extends Tile {
 
 	public boolean isOn() {
 		return on;
+	}
+
+	@Override
+	public Tile copy() {
+		return new ReceptorTile(x, y, direction.encode(), level);
 	}
 }

@@ -12,13 +12,12 @@ public class Button {
 	public static final Button NULL = new Button(0, 0, 0, 0, "null", true); //used instead of the null keyword, to be safe
 
 	public int x, y, width, height;
-	public boolean hover, clicked, enabled;
+	public boolean hover, clicked, enabled, visible;
 	public boolean drawText;
 	public Color bgCol, hovCol, textCol;
 	public String text;
 
-	public Button(int x, int y, int width, int height, String text, boolean drawText, Color bgCol,
-			Color textCol) {
+	public Button(int x, int y, int width, int height, String text, boolean drawText, Color bgCol, Color textCol) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -27,6 +26,7 @@ public class Button {
 		this.drawText = drawText;
 		this.hover = false;
 		this.enabled = true;
+		this.visible = true;
 		this.bgCol = bgCol;
 		this.hovCol = bgCol.darker();
 		this.textCol = textCol;
@@ -47,6 +47,7 @@ public class Button {
 	}
 
 	public void render(Graphics g, Color colour, Color textCol) {
+		if (visible == false) return;
 		g.setColor(colour);
 		g.fillRect(x, y, width, height);
 		if (drawText) {
@@ -68,7 +69,7 @@ public class Button {
 	}
 
 	public void update(double delta) {
-		if (enabled == false) return;
+		if (enabled == false || visible == false) return;
 		if (Mouse.x > x && Mouse.y > y && Mouse.x < x + width && Mouse.y < y + height) {
 			hover = true;
 			clicked = Mouse.leftClicked;

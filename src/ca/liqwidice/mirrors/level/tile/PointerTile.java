@@ -2,8 +2,12 @@ package ca.liqwidice.mirrors.level.tile;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Polygon;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import ca.liqwidice.mirrors.input.Mouse;
 import ca.liqwidice.mirrors.level.Direction;
@@ -11,6 +15,20 @@ import ca.liqwidice.mirrors.level.Laser;
 import ca.liqwidice.mirrors.level.Level;
 
 public class PointerTile extends Tile { //Symbolizes a laser pointer, a source of light
+	private static final long serialVersionUID = 1L;
+
+	public static BufferedImage N, E, S, W;
+
+	static {
+		try {
+			N = ImageIO.read(new File("res/pointerN.png"));
+			E = ImageIO.read(new File("res/pointerE.png"));
+			S = ImageIO.read(new File("res/pointerS.png"));
+			W = ImageIO.read(new File("res/pointerW.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	protected Direction direction = Direction.NORTH;
 	private boolean on;
@@ -67,7 +85,7 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 			// Find the next direction *after* setting the new laser object
 			nextTile.addLaser(new Laser(nextDir.opposite(), colour));
 			nextDir = nextTile.lasers.get(nextTile.lasers.size() - 1).getDirExiting();
-			
+
 			xx = nextTile.getX() + nextDir.offset[0];
 			yy = nextTile.getY() + nextDir.offset[1];
 
@@ -80,29 +98,20 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 		g.setColor(Color.WHITE);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
-		g.setColor(Color.DARK_GRAY);
-		int x1 = 15;
-		int x2 = 91;
-		int y1 = 15;
-		int y2 = 91;
 		switch (direction) {
 		case NORTH:
-			g.fillPolygon(new Polygon(new int[] { x + x1, x + x2, x + (x2 - x1) / 2 + x1 }, new int[] { y + y2, y + y2,
-					y + y1 }, 3));
+			g.drawImage(N, x, y, null);
 			break;
 		case EAST:
-			g.fillPolygon(new Polygon(new int[] { x + x1, x + x1, x + x2 }, new int[] { y + y1, y + y2,
-					y + (y2 - y1) / 2 + y1 }, 3));
+			g.drawImage(E, x, y, null);
 			break;
 		case SOUTH:
-			g.fillPolygon(new Polygon(new int[] { x + x1, x + x2, x + (x2 - x1) / 2 + x1 }, new int[] { y + y1, y + y1,
-					y + y2 }, 3));
+			g.drawImage(S, x, y, null);
 			break;
 		case WEST:
-			g.fillPolygon(new Polygon(new int[] { x + x2, x + x2, x + x1 }, new int[] { y + y1, y + y2,
-					y + (y2 - y1) / 2 + y1 }, 3));
+			g.drawImage(W, x, y, null);
 			break;
-		case NULL:
+		default:
 			break;
 		}
 
@@ -119,4 +128,10 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 	public Direction getDirection() {
 		return direction;
 	}
+
+	@Override
+	public Tile copy() {
+		return new PointerTile(x, y, direction.encode(), colour, level);
+	}
+
 }

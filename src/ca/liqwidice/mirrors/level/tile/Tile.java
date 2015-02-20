@@ -2,15 +2,22 @@ package ca.liqwidice.mirrors.level.tile;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.liqwidice.mirrors.level.Laser;
 import ca.liqwidice.mirrors.level.Level;
 
 /** Represents one square on the game board */
-public abstract class Tile {
+public abstract class Tile implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-	public static final int WIDTH = 107;
+	public static final String BLANK_TILE = "blank";
+	public static final String POINTER_TILE = "pointer";
+	public static final String MIRROR_TILE = "mirror";
+	public static final String RECEPTOR_TILE = "receptor";
+
+	public static final int WIDTH = 64;
 
 	protected int x, y;
 	protected Level level;
@@ -53,5 +60,7 @@ public abstract class Tile {
 	public int getY() {
 		return y;
 	}
+
+	public abstract Tile copy();
 
 }
