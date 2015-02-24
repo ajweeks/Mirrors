@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import ca.liqwidice.mirrors.Game;
 import ca.liqwidice.mirrors.button.Button;
 import ca.liqwidice.mirrors.button.ButtonManager;
+import ca.liqwidice.mirrors.button.ImageButton;
 import ca.liqwidice.mirrors.utils.Sound;
 
 public class MainMenuState extends BasicState {
@@ -24,10 +25,11 @@ public class MainMenuState extends BasicState {
 	@Override
 	public void init() {
 		manager = new ButtonManager();
-		manager.addButton(new Button(362, 190, 134, 48, BTN_LEVEL_SELECT));
-		manager.addButton(new Button(675, 17, 80, 40, BTN_QUIETER));
-		manager.addButton(new Button(760, 17, 80, 40, BTN_LOUDER));
-		manager.addButton(new Button(389, 270, 80, 40, BTN_QUIT));
+		manager.addButton(new Button(Game.SIZE.width / 2 - 134 / 2, Game.SIZE.height / 2 - 28, 134, 48,
+				BTN_LEVEL_SELECT));
+		manager.addButton(new ImageButton(Game.SIZE.width - 65 - 50, 20, 45, 45, BTN_QUIETER, ImageButton.quieter));
+		manager.addButton(new ImageButton(Game.SIZE.width - 65, 20, 45, 45, BTN_LOUDER, ImageButton.louder));
+		manager.addButton(new Button(Game.SIZE.width / 2 - 80 / 2, Game.SIZE.height / 2 + 28, 80, 40, BTN_QUIT));
 	}
 
 	@Override
@@ -35,17 +37,18 @@ public class MainMenuState extends BasicState {
 		manager.updateAll(delta);
 
 		if (Sound.volume == Sound.MIN_VOLUME) {
-			manager.getButton(BTN_QUIETER).enabled = false;
+			manager.getButton(BTN_QUIETER).visible = false;
 		} else {
-			manager.getButton(BTN_QUIETER).enabled = true;
+			manager.getButton(BTN_QUIETER).visible = true;
 		}
+
 		if (Sound.volume == Sound.MAX_VOLUME) { // Not necessary, but prevents a sound from being played if we are already at max vol 
-			manager.getButton(BTN_LOUDER).enabled = false;
+			manager.getButton(BTN_LOUDER).visible = false;
 		} else {
-			manager.getButton(BTN_LOUDER).enabled = true;
+			manager.getButton(BTN_LOUDER).visible = true;
 		}
+
 		if (manager.getButton(BTN_LEVEL_SELECT).clicked) {
-			Sound.SELECT.play();
 			game.enterGameState(new LevelSelectState(game));
 		} else if (manager.getButton(BTN_LOUDER).clicked) {
 			Sound.louder();
@@ -61,8 +64,8 @@ public class MainMenuState extends BasicState {
 	@Override
 	public void render(Graphics g) {
 		g.setColor(Color.WHITE);
-		if (Sound.SELECT.available) g.drawString("Volume: " + Sound.getVolPercent() + "%", 715, 76);
-		else g.drawString("Couldn't load sounds! :(", 705, 76);
+		if (Sound.SELECT.available) g.drawString("Volume: " + Sound.getVolPercent() + "%", Game.SIZE.width - 105, 76);
+		else g.drawString("Couldn't load sounds! :(", Game.SIZE.height - 105, 76);
 		// LATER add a cool-looking volume slider to replace boring text percentages
 
 		manager.renderAll(g);

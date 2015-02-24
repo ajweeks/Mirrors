@@ -16,7 +16,7 @@ import ca.liqwidice.mirrors.level.Level;
 public class MirrorTile extends Tile {
 	private static final long serialVersionUID = 1L;
 
-	public static BufferedImage NW, NE;
+	public transient static BufferedImage NW, NE;
 
 	static {
 		try {
@@ -27,19 +27,21 @@ public class MirrorTile extends Tile {
 		}
 	}
 
-	public static final int FS = 0; //the mirror is angled like a forward slash, from the SW corner to the NE (/)
-	public static final int BS = 1; //the mirror is angled like a backward slash, from the NW corner to the SE (\)
+	public static final int FS = 0; // the mirror is angled like a forward slash, from the SW corner to the NE (/)
+	public static final int BS = 1; // the mirror is angled like a backward slash, from the NW corner to the SE (\)
 
 	protected int direction;
 
 	public MirrorTile(int x, int y, int direction, Level level) {
-		super(x, y, level);
+		super(x, y, MIRROR_ID, level);
 		this.direction = direction;
 	}
 
 	@Override
 	public void pollInput() {
-		if (Mouse.leftClicked && Mouse.isInside(this)) switchDirection();
+		if (Mouse.leftClicked && Mouse.isInside(this)) {
+			switchDirection();
+		}
 	}
 
 	@Override
@@ -51,7 +53,7 @@ public class MirrorTile extends Tile {
 		else if (direction == BS) g.drawImage(NW, x, y, null);
 
 		for (Laser l : lasers) {
-			l.render(x, y, g);
+			l.render(x, y, g); // LATER render lasers using separate laser sprite for mirrors?
 		}
 	}
 
@@ -80,7 +82,7 @@ public class MirrorTile extends Tile {
 	}
 
 	@Override
-	public Tile copy() {
+	public Tile copy(int x, int y) {
 		return new MirrorTile(x, y, direction, level);
 	}
 }

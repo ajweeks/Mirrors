@@ -10,7 +10,7 @@ public class BlankTile extends Tile {
 	private static final long serialVersionUID = 1L;
 
 	public BlankTile(int x, int y, Level level) {
-		super(x, y, level);
+		super(x, y, BLANK_ID, level);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class BlankTile extends Tile {
 	}
 
 	@Override
-	public Tile copy() {
+	public Tile copy(int x, int y) {
 		return new BlankTile(x, y, level);
 	}
 

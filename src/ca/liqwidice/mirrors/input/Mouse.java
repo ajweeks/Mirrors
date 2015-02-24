@@ -20,10 +20,10 @@ public class Mouse implements MouseMotionListener, MouseListener {
 
 	//@formatter:off
 	public static boolean isInside(Tile t) {
-		return  x > Level.xo + t.getX() * Tile.WIDTH && 
-				x < Level.xo + t.getX() * Tile.WIDTH + Tile.WIDTH && 
-				y > Level.yo + t.getY() * Tile.WIDTH && 
-				y < Level.yo + t.getY() * Tile.WIDTH + Tile.WIDTH;
+		return  x >= (t.getX()  * Tile.WIDTH + Level.xo) && 
+				x < (t.getX() * Tile.WIDTH + Level.xo) + Tile.WIDTH && 
+				y >= (t.getY() * Tile.WIDTH + Level.yo) && 
+				y < (t.getY() * Tile.WIDTH + Level.yo) + Tile.WIDTH;
 	}
 	//@formatter:on
 

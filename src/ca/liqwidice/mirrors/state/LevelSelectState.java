@@ -8,7 +8,7 @@ import ca.liqwidice.mirrors.Game;
 import ca.liqwidice.mirrors.button.Button;
 import ca.liqwidice.mirrors.button.ButtonManager;
 import ca.liqwidice.mirrors.button.LevelButton;
-import ca.liqwidice.mirrors.level.Level;
+import ca.liqwidice.mirrors.level.Levels;
 
 public class LevelSelectState extends BasicState {
 
@@ -26,7 +26,7 @@ public class LevelSelectState extends BasicState {
 		manager.addButton(new Button(160, 40, 100, 40, BTN_BACK));
 		for (int i = 0; i < 20; i++) {
 			manager.addButton(new LevelButton(160 + (i / 7) * 110, 115 + i * 50 + (i / 7) * -(7 * 50), 100, 40,
-					"Level " + (i + 1), new Level(i + 1), Colours.uncompleted_level, Colours.completed_level,
+					"Level " + (i + 1), Levels.load(i + 1), Colours.uncompleted_level, Colours.completed_level,
 					Color.WHITE, i < 7));
 		}
 	}

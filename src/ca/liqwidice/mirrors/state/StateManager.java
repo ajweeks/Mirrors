@@ -49,8 +49,8 @@ public class StateManager {
 			states.remove(states.size() - 1);
 		}
 		// Release all inputs
-		Keyboard.update();
-		Mouse.update();
+		Keyboard.releaseAll();
+		Mouse.releaseAll();
 	}
 
 	public void destroy() { //To be called just before the game is closed (mostly to deal with open Threads)

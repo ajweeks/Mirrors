@@ -23,6 +23,13 @@ public class Keyboard implements KeyListener {
 		ctrl_w = false;
 	}
 
+	public static void releaseAll() {
+		ctrl_e = false;
+		ctrl_e_tt = false;
+		esc = false;
+		ctrl_w = false;
+	}
+
 	private void keyChanged(KeyEvent event, boolean down) {
 		switch (event.getKeyCode()) {
 		case KeyEvent.VK_ESCAPE:

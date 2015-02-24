@@ -25,11 +25,7 @@ public class Level implements Serializable {
 		this.height = 8; // LATER add variably-sized w and h
 		this.width = 10;
 		tiles = new Tile[height][width];
-		for (int y = 0; y < tiles.length; y++) {
-			for (int x = 0; x < tiles[y].length; x++) {
-				tiles[y][x] = new BlankTile(x, y, this); // TEMpORARY line
-			}
-		}
+		clear(); // instantiate the level with blank tiles
 		this.level = level;
 		updatePointerTiles(1.0d);
 		updateAllNonPointerTiles(1.0d);
@@ -44,7 +40,7 @@ public class Level implements Serializable {
 			}
 		}
 
-		if (Mouse.leftClicked || Mouse.rightClicked) { // but only update the board when there is a change (efficiency!!)
+		if (Mouse.leftClicked || Mouse.rightClicked) { // only update the board when there is a change (efficiency!!)
 			removeAllLasers();
 			updatePointerTiles(delta);
 			updateAllNonPointerTiles(delta);
@@ -73,16 +69,17 @@ public class Level implements Serializable {
 	}
 
 	/** Returns the tile under the mouse this frame OR null if mouse is not above a tile */
-	public Tile getTileUnderMouse() {
-		if (Mouse.x > xo && Mouse.x < xo + (width + 1) * Tile.WIDTH) {
-			if (Mouse.y > yo && Mouse.y < yo + (height + 1) * Tile.WIDTH) {
-				int x = (Mouse.x - xo) / Tile.WIDTH;
-				int y = (Mouse.y - yo) / Tile.WIDTH;
-				return tiles[y][x];
-			}
-		}
-		return null;
-	}
+	//	public Tile getTileUnderMouse() {
+	//		if (Mouse.x > xo && Mouse.x < xo + (width + 1) * Tile.WIDTH) {
+	//			if (Mouse.y > yo && Mouse.y < yo + (height + 1) * Tile.WIDTH) {
+	//				int x = (Mouse.x - xo) / Tile.WIDTH;
+	//				int y = (Mouse.y - yo) / Tile.WIDTH;
+	//				System.out.println(x + " " + y);
+	//				return tiles[y][x];
+	//			}
+	//		}
+	//		return null;
+	//	}
 
 	private void updateAllNonPointerTiles(double delta) {
 		for (int y = 0; y < height; y++) {
@@ -122,4 +119,13 @@ public class Level implements Serializable {
 			}
 		}
 	}
+	
+	public void clear() {
+		for (int y = 0; y < tiles.length; y++) {
+			for (int x = 0; x < tiles[y].length; x++) {
+				tiles[y][x] = new BlankTile(x, y, this);
+			}
+		}
+	}
+	
 }

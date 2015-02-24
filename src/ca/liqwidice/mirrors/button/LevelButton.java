@@ -23,6 +23,13 @@ public class LevelButton extends Button {
 	}
 
 	@Override
+	public void update(double delta) {
+		super.update(delta);
+		if(level.completed)  this.bgCol = completed;
+		else this.bgCol = uncompleted;
+	}
+	
+	@Override
 	public void render(Graphics g) {
 		if (level.completed) {
 			if (hover) g.setColor(this.completed.darker());
@@ -48,5 +55,4 @@ public class LevelButton extends Button {
 	public Level getLevel() {
 		return level;
 	}
-
 }

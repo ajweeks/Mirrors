@@ -12,6 +12,7 @@ import ca.liqwidice.mirrors.input.Mouse;
 import ca.liqwidice.mirrors.level.Direction;
 import ca.liqwidice.mirrors.level.Laser;
 import ca.liqwidice.mirrors.level.Level;
+import ca.liqwidice.mirrors.state.GameState;
 
 /**
  * Represents a goal, the player must get the laser (which is shot out of the PointerTile) to this tile to win
@@ -20,14 +21,18 @@ import ca.liqwidice.mirrors.level.Level;
 public class ReceptorTile extends Tile {
 	private static final long serialVersionUID = 1L;
 
-	public static BufferedImage N, E, S, W;
+	public transient static BufferedImage N, Nl, E, El, S, Sl, W, Wl;
 
 	static {
 		try {
 			N = ImageIO.read(new File("res/receptorN.png"));
+			Nl = ImageIO.read(new File("res/receptor_lockedN.png"));
 			E = ImageIO.read(new File("res/receptorE.png"));
+			El = ImageIO.read(new File("res/receptor_lockedE.png"));
 			S = ImageIO.read(new File("res/receptorS.png"));
+			Sl = ImageIO.read(new File("res/receptor_lockedS.png"));
 			W = ImageIO.read(new File("res/receptorW.png"));
+			Wl = ImageIO.read(new File("res/receptor_lockedW.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -35,19 +40,21 @@ public class ReceptorTile extends Tile {
 
 	private boolean on; //LATER make this an integer, representing all inputs 
 	private Direction direction; // The direction our receptor is facing LATER add different types of receptors (2-way, colour coded, all way, etc.)
+	private boolean locked = false;
 
 	public ReceptorTile(int x, int y, int direction, Level level) {
-		super(x, y, level);
+		super(x, y, RECEPTOR_ID, level);
 		this.direction = Direction.decode(direction);
 		this.on = false;
 	}
 
-	// LATER add lockable field to prevent the player from rotating this at certain times
-
 	@Override
 	public void pollInput() {
-		if (Mouse.rightClicked && Mouse.isInside(this)) {
-			this.direction = this.direction.cw();
+		if (Mouse.leftClicked && Mouse.isInside(this)) {
+			if (this.locked == false) this.direction = this.direction.cw();
+		}
+		if (GameState.levelEditingMode && Mouse.rightClicked && Mouse.isInside(this)) {
+			this.locked = !this.locked;
 		}
 	}
 
@@ -72,16 +79,20 @@ public class ReceptorTile extends Tile {
 
 		switch (direction) {
 		case NORTH:
-			g.drawImage(N, x, y, null);
+			if (locked) g.drawImage(Nl, x, y, null);
+			else g.drawImage(N, x, y, null);
 			break;
 		case EAST:
-			g.drawImage(E, x, y, null);
+			if (locked) g.drawImage(El, x, y, null);
+			else g.drawImage(E, x, y, null);
 			break;
 		case SOUTH:
-			g.drawImage(S, x, y, null);
+			if (locked) g.drawImage(Sl, x, y, null);
+			else g.drawImage(S, x, y, null);
 			break;
 		case WEST:
-			g.drawImage(W, x, y, null);
+			if (locked) g.drawImage(Wl, x, y, null);
+			else g.drawImage(W, x, y, null);
 			break;
 		case NULL:
 		default:
@@ -100,7 +111,7 @@ public class ReceptorTile extends Tile {
 	}
 
 	@Override
-	public Tile copy() {
+	public Tile copy(int x, int y) {
 		return new ReceptorTile(x, y, direction.encode(), level);
 	}
 }

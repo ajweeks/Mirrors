@@ -5,7 +5,7 @@ public enum Direction {
 			-1, 0 }, "W"), NULL(new int[] { 0, 0 }, "~");
 
 	public int[] offset;
-	public String string; // TODO remove this?
+	public String string; // LATER remove this?
 
 	Direction(int[] offset, String string) {
 		this.offset = offset;

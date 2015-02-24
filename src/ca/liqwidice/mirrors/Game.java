@@ -20,7 +20,7 @@ public class Game extends JFrame implements Runnable {
 
 	public static boolean debug = false;
 
-	public static final Dimension SIZE = new Dimension(856, 535);
+	public static final Dimension SIZE = new Dimension(790, 512);
 	public static final String TITLE = "Mirrors";
 	public static final String VERSION = "0.0.2a";
 
