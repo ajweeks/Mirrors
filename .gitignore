@@ -2,6 +2,7 @@
 *.project
 *.classpath
 *.db
+*.ser
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
