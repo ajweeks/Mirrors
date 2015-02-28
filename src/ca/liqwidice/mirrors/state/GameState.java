@@ -31,15 +31,18 @@ public class GameState extends BasicState {
 	private Tile[] selectionTiles;
 	private int selectedTileIndex = 0;
 
+	private WinScreenPopup winscreen = new WinScreenPopup(180, 80, Game.SIZE.width - 210, Game.SIZE.height - 150);
+	private boolean showWinScreen = false;
 
 	public static boolean levelEditingMode = false;
 
 	public GameState(Game game, Level level) {
 		super(game);
 		this.level = level;
+		level.update(1.0);
 		this.selectionTiles = new Tile[] { new BlankTile(20, 50, level), new MirrorTile(20, 50 + Tile.WIDTH, 0, level),
 				new PointerTile(20, 50 + Tile.WIDTH * 2, 0, Color.RED, level),
-				new ReceptorTile(20, 50 + Tile.WIDTH * 3, 0, level) };
+				new ReceptorTile(20, 50 + Tile.WIDTH * 3, level) };
 	}
 
 	@Override
@@ -72,9 +75,9 @@ public class GameState extends BasicState {
 			if (Mouse.x >= Level.xo && Mouse.y >= Level.yo) {
 				xx = (Mouse.x - Level.xo) / Tile.WIDTH;
 				yy = (Mouse.y - Level.yo) / Tile.WIDTH;
-				if (xx >= 0 && xx < level.width && yy >= 0 && yy < level.height) {
+				if (xx >= 0 && xx < Level.width && yy >= 0 && yy < Level.height) {
 					Tile t = level.tiles[yy][xx];
-					if (t.getID() == selectionTiles[selectedTileIndex].getID()) {
+					if (t.getID().equals(selectionTiles[selectedTileIndex].getID())) {
 						level.tiles[yy][xx].pollInput();
 					} else {
 						level.tiles[yy][xx] = selectionTiles[selectedTileIndex].copy(xx, yy);
@@ -84,19 +87,38 @@ public class GameState extends BasicState {
 
 			manager.getButton(SAVE).update(delta);
 			manager.getButton(CLEAR).update(delta);
-			
+
 		} else {
 			manager.updateAll(delta);
 		}
 
-		level.update(delta, levelEditingMode);
+		//		if (level.completedClicked) showWinScreen = true;
+
+		if (showWinScreen) {
+			String action = winscreen.update(delta);
+			if (action == WinScreenPopup.NEXT) {
+				game.enterPreviousState();
+				game.enterGameState(LevelSelectState.getGameState(level.level + 1));
+			} else if (action == WinScreenPopup.PREV) {
+				game.enterPreviousState();
+				game.enterGameState(LevelSelectState.getGameState(level.level - 1));
+			} else if (action == WinScreenPopup.RETRY) {
+				level.clear();
+				game.enterPreviousState();
+				game.enterGameState(LevelSelectState.getGameState(level.level));
+			} else if (action == WinScreenPopup.EXIT) {
+				game.enterPreviousState();
+			}
+		}
+
+		level.update(delta);
 
 		if (manager.getButton(LEVEL_SELECT).clicked) {
 			game.enterPreviousState();
 		} else if (manager.getButton(RESET).clicked) {
 			Sound.SELECT.play();
-			level = Levels.load(level.level, true);
-			Levels.save(level);
+			level.copy(Levels.load(level.level, true));
+			level.update(1.0);
 		} else if (manager.getButton(QUIT).clicked) {
 			game.stopGame();
 		} else if (manager.getButton(SAVE).clicked) {
@@ -146,6 +168,9 @@ public class GameState extends BasicState {
 			}
 		}
 
+		if (showWinScreen) {
+			winscreen.render(g);
+		}
 
 	}
 
@@ -156,7 +181,7 @@ public class GameState extends BasicState {
 
 	@Override
 	public void destroy() {
-
-	}
 		Levels.save(level);
+	}
+
 }

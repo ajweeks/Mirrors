@@ -15,7 +15,7 @@ public class LevelButton extends Button {
 
 	public LevelButton(int x, int y, int width, int height, String text, Level level, Color uncompleted,
 			Color completed, Color textCol, boolean unlocked) {
-		super(x, y, width, height, text, true, level.completed ? completed : uncompleted, textCol);
+		super(x, y, width, height, text, true, level.isCompleted() ? completed : uncompleted, textCol);
 		this.level = level;
 		this.uncompleted = uncompleted;
 		this.completed = completed;
@@ -25,19 +25,18 @@ public class LevelButton extends Button {
 	@Override
 	public void update(double delta) {
 		super.update(delta);
-		if(level.completed)  this.bgCol = completed;
+		if (level.isCompleted()) this.bgCol = completed;
 		else this.bgCol = uncompleted;
 	}
-	
+
 	@Override
 	public void render(Graphics g) {
-		if (level.completed) {
+		if (enabled == false) g.setColor(Colours.disabledButton);
+		else if (level.isCompleted()) {
 			if (hover) g.setColor(this.completed.darker());
 			else g.setColor(this.completed);
 		} else {
-			if(enabled == false) {
-				g.setColor(Colours.disabledButton);
-			}else if (hover) g.setColor(this.uncompleted.darker());
+			if (hover) g.setColor(this.uncompleted.darker());
 			else g.setColor(this.uncompleted);
 		}
 

@@ -18,11 +18,9 @@ import ca.liqwidice.mirrors.state.StateManager;
 public class Game extends JFrame implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static boolean debug = false;
-
 	public static final Dimension SIZE = new Dimension(790, 512);
 	public static final String TITLE = "Mirrors";
-	public static final String VERSION = "0.0.2a";
+	public static final String VERSION = "0.1.0a";
 
 	public static final Font font16 = new Font("consolas", Font.BOLD, 16);
 	public static final Font font32 = font16.deriveFont(32.0f);

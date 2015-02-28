@@ -12,20 +12,20 @@ import ca.liqwidice.mirrors.level.Level;
 public abstract class Tile implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int BLANK_ID = 0;
-	public static final int MIRROR_ID = 1;
-	public static final int POINTER_ID = 2;
-	public static final int RECEPTOR_ID = 3;
+	public static final String BLANK_ID = "Blank";
+	public static final String MIRROR_ID = "Mirror";
+	public static final String POINTER_ID = "Pointer";
+	public static final String RECEPTOR_ID = "Receptor";
 
 	public static final int WIDTH = 64;
 
 	protected int x, y;
-	protected int id;
+	protected String id;
 	protected Level level;
 	protected Image image;
 	protected ArrayList<Laser> lasers; // stores this tile's laser objects
 
-	public Tile(int x, int y, int id, Level level) {
+	public Tile(int x, int y, String id, Level level) {
 		this.x = x;
 		this.y = y;
 		this.id = id;
@@ -41,14 +41,6 @@ public abstract class Tile implements Serializable {
 
 	public abstract void addLaser(Laser laser);
 
-	public void removeLaser(Laser laser) {
-		if (this.lasers.contains(laser)) {
-			this.lasers.remove(laser);
-		} else {
-			System.err.println("Attempt to remove a laser that doesn't exist! " + laser);
-		}
-	}
-
 	public void removeAllLasers() {
 		lasers.removeAll(lasers);
 	}
@@ -63,7 +55,7 @@ public abstract class Tile implements Serializable {
 
 	public abstract Tile copy(int x, int y);
 
-	public int getID() {
+	public String getID() {
 		return id;
 	}
 

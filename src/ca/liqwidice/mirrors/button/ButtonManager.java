@@ -31,7 +31,6 @@ public class ButtonManager {
 		for (int i = 0; i < buttons.size(); i++) {
 			if (buttons.get(i).text.equals(text)) return buttons.get(i);
 		}
-		System.err.println("ButtonManager is returning a NULL Button! " + text + " is not a recognized button name.");
 		return Button.NULL;
 	}
 

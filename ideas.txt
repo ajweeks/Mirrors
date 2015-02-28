@@ -6,37 +6,26 @@ different colour lasers
 different kinds of mirrors
 different kinds of targets
 
-achievements
-=======
 ----------------------------------------------------------Title Ideas----------------------------------------------------------------------------------                                                                                                                                                                                              
-mirrors (y)
-reflect
-reflection
-lasers
-
-----------------------------------------------------------Board Ideas-----------------------------------------------------------------------------------
-board is made up of a grid of tiles (blank, mirror, laser, receptor)
-
-----------------------------------------------------------Objective Ideas-------------------------------------------------------------------------------
-shine lasers into detectors by rotating mirrors by clicking on them
-like rush hour a little bit...
+Mirrors (y)
+Reflect
+Reflection
+Lasers
+Reflectivity
+Shine
+Light Bounce
 
 ----------------------------------------------------------Laser Ideas-----------------------------------------------------------------------------------
 different coloured beams?
-more than one receptor?
-colour-coded lasers-receptors!
+white lasers contain all colours & therefore all colour-coded receptors will accept it?
 
 ----------------------------------------------------------Receptor Ideas--------------------------------------------------------------------------------
-in the wall or an actual tile??
-multiple entrances if and actual tile?
-different coloured entrances to one receptor 
+colour-coded lasers-receptors!
+lock-able receptors? (which are unable to be rotated by the player)
 
 ----------------------------------------------------------Mirror Ideas----------------------------------------------------------------------------------
-dual sided mirrors both reflect lasers
-different kinds of mirrors?
-splitting mirrors
-one way mirrors?
-colour coded mirrors
+different kinds of mirrors? ... like what?
+colour coded mirrors (only refelect their own colour)
 colour changing mirrors (changes laser colour)
 
 ----------------------------------------------------------Laser Splitter Ideas--------------------------------------------------------------------------
@@ -46,15 +35,10 @@ stops laser from continuing on
 ----------------------------------------------------------Bomb Ideas------------------------------------------------------------------------------------
 If a laser touches a bomb, you must restart the level
 
-----------------------------------------------------------Idea Ideas------------------------------------------------------------------------------------
-Different Game mode ideas::
--Colour changing based off clicking!
 
-Add multi-directional pointers
 
-Add Level Unlocking! (You must beat the previous level in order to play the next?
 
-Level Editor
+
 
 ----------------------------------------------------------Achievement Ideas-----------------------------------------------------------------------------
 Obvious things:

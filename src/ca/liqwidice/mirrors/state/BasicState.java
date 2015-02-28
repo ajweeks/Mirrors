@@ -6,10 +6,10 @@ import ca.liqwidice.mirrors.Game;
 
 public abstract class BasicState {
 
-	protected Game game;
+	protected static Game game;
 
 	public BasicState(Game game) {
-		this.game = game;
+		BasicState.game = game;
 	}
 
 	public abstract void init();
@@ -19,7 +19,7 @@ public abstract class BasicState {
 	public abstract void render(Graphics g);
 
 	public abstract int getID();
-	
+
 	public abstract void destroy();
 
 }

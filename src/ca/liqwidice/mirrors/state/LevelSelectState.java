@@ -18,7 +18,7 @@ public class LevelSelectState extends BasicState {
 		super(game);
 	}
 
-	private ButtonManager manager;
+	private static ButtonManager manager;
 
 	@Override
 	public void init() {
@@ -60,4 +60,11 @@ public class LevelSelectState extends BasicState {
 	public void destroy() {
 
 	}
+
+	/** Returns null if there is no level found, otherwise a new GameState object that has the Level level */
+	public static GameState getGameState(int level) {
+		if (manager.getButton("Level " + level) == Button.NULL) return null;
+		return new GameState(game, ((LevelButton) manager.getButton("Level " + level)).getLevel());
+	}
+
 }

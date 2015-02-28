@@ -1,13 +1,17 @@
 package ca.liqwidice.mirrors.level;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
+import ca.liqwidice.mirrors.Game;
 import ca.liqwidice.mirrors.input.Mouse;
 import ca.liqwidice.mirrors.level.tile.BlankTile;
 import ca.liqwidice.mirrors.level.tile.PointerTile;
+import ca.liqwidice.mirrors.level.tile.Receptor;
 import ca.liqwidice.mirrors.level.tile.ReceptorTile;
 import ca.liqwidice.mirrors.level.tile.Tile;
+import ca.liqwidice.mirrors.state.GameState;
 
 public class Level implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -17,22 +21,26 @@ public class Level implements Serializable {
 	public static final int yo = 0;
 
 	public Tile[][] tiles;
-	public int width, height;
+	public static int width, height;
+
 	public int level;
-	public boolean completed = false;
+	private boolean completed = false;
+	public boolean completedClicked = false; // Is only true when completed is true, and completed was NOT true last frame
 
 	public Level(int level) {
-		this.height = 8; // LATER add variably-sized w and h
-		this.width = 10;
+		Level.height = 8; // LATER add variably-sized w and h
+		Level.width = 10;
 		tiles = new Tile[height][width];
 		clear(); // instantiate the level with blank tiles
 		this.level = level;
 		updatePointerTiles(1.0d);
 		updateAllNonPointerTiles(1.0d);
+
+		this.completed = true; // instantiate to true so that when loading a level that has been completed already, the winscreen popup isn't shown
 	}
 
-	public void update(double delta, boolean levelEditingMode) {
-		if (levelEditingMode == false) {
+	public void update(double delta) {
+		if (GameState.levelEditingMode == false) {
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					tiles[y][x].pollInput(); // poll for input every frame
@@ -45,10 +53,18 @@ public class Level implements Serializable {
 			updatePointerTiles(delta);
 			updateAllNonPointerTiles(delta);
 
+			boolean receptorsOnBefore = this.completed;
+
 			if (allReceptorsOn()) {
 				this.completed = true;
 			} else {
 				this.completed = false;
+			}
+
+			if (this.completed && !receptorsOnBefore) {
+				completedClicked = true;
+			} else {
+				completedClicked = false;
 			}
 		}
 	}
@@ -61,25 +77,32 @@ public class Level implements Serializable {
 				tiles[y][x].render(xx, yy, g);
 			}
 		}
+
+		if (Mouse.x > xo && Mouse.x < xo + width * Tile.WIDTH && Mouse.y > yo && Mouse.y < yo + height * Tile.WIDTH) {
+			int xx = (Mouse.x - xo) / Tile.WIDTH;
+			int yy = (Mouse.y - yo) / Tile.WIDTH;
+
+			if (GameState.levelEditingMode) {
+				g.setColor(Color.BLACK);
+				Tile t = tiles[yy][xx];
+				int xxo = Mouse.x > Game.SIZE.width / 2 ? -100 : 0;
+				g.drawString("" + t.getID(), Mouse.x + xxo + 10, Mouse.y);
+				if (t instanceof ReceptorTile) {
+					g.drawString("" + ((ReceptorTile) t).getDirection(), Mouse.x + xxo+ 10, Mouse.y - 20);
+					Receptor[] receptors = ((ReceptorTile) t).getReceptors();
+					for (int i = 0; i < receptors.length; i++) {
+						g.drawString("" + receptors[i].getDirection(), Mouse.x + xxo+ 10, Mouse.y + (i + 1) * 20);
+						g.drawString("" + receptors[i].getLaser().getDirEntering(), Mouse.x + xxo+ 60, Mouse.y + (i + 1) * 20);
+					}
+				}
+			}
+		}
 	}
 
 	public Tile getTile(int x, int y) {
 		if (y < 0 || y >= height || x < 0 || x >= width) return null;
 		return tiles[y][x];
 	}
-
-	/** Returns the tile under the mouse this frame OR null if mouse is not above a tile */
-	//	public Tile getTileUnderMouse() {
-	//		if (Mouse.x > xo && Mouse.x < xo + (width + 1) * Tile.WIDTH) {
-	//			if (Mouse.y > yo && Mouse.y < yo + (height + 1) * Tile.WIDTH) {
-	//				int x = (Mouse.x - xo) / Tile.WIDTH;
-	//				int y = (Mouse.y - yo) / Tile.WIDTH;
-	//				System.out.println(x + " " + y);
-	//				return tiles[y][x];
-	//			}
-	//		}
-	//		return null;
-	//	}
 
 	private void updateAllNonPointerTiles(double delta) {
 		for (int y = 0; y < height; y++) {
@@ -119,7 +142,7 @@ public class Level implements Serializable {
 			}
 		}
 	}
-	
+
 	public void clear() {
 		for (int y = 0; y < tiles.length; y++) {
 			for (int x = 0; x < tiles[y].length; x++) {
@@ -127,5 +150,15 @@ public class Level implements Serializable {
 			}
 		}
 	}
-	
+
+	/** Copy all of the new level's fields into us */
+	public void copy(Level level) {
+		this.tiles = level.tiles;
+		this.completed = level.completed;
+	}
+
+	public boolean isCompleted() {
+		return completed;
+	}
+
 }

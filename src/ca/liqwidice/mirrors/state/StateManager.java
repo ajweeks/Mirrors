@@ -36,6 +36,7 @@ public class StateManager {
 	}
 
 	public void enterState(BasicState state) {
+		if(state == null) return;
 		states.add(state);
 		states.get(states.size() - 1).init();
 		Sound.SELECT.play();
@@ -53,7 +54,7 @@ public class StateManager {
 		Mouse.releaseAll();
 	}
 
-	public void destroy() { //To be called just before the game is closed (mostly to deal with open Threads)
+	public void destroy() { //To be called just before the game is closed (mostly to deal with open Threads and saving the level)
 		for (int i = 0; i < states.size(); i++) {
 			states.get(i).destroy();
 		}

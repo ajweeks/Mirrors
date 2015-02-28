@@ -16,12 +16,31 @@ import ca.liqwidice.mirrors.level.Level;
 public class MirrorTile extends Tile {
 	private static final long serialVersionUID = 1L;
 
-	public transient static BufferedImage NW, NE;
+	public transient static BufferedImage NW, NE; // MIRRORS
+	public transient static BufferedImage[] CORNER_LASERS;
+
+	public transient static final int RED = 0, GREEN = 1, BLUE = 2;
 
 	static {
 		try {
-			NW = ImageIO.read(new File("res/mirrorNW.png"));
-			NE = ImageIO.read(new File("res/mirrorNE.png"));
+			NW = ImageIO.read(new File("res/mirrorBS.png"));
+			NE = ImageIO.read(new File("res/mirrorFS.png"));
+
+			CORNER_LASERS = new BufferedImage[] { //
+			ImageIO.read(new File("res/lasers/laser_redNW.png")), // 0
+					ImageIO.read(new File("res/lasers/laser_redNE.png")), // 1
+					ImageIO.read(new File("res/lasers/laser_redSE.png")), // 2
+					ImageIO.read(new File("res/lasers/laser_redSW.png")), // 3
+
+					ImageIO.read(new File("res/lasers/laser_greenNW.png")), // 4
+					ImageIO.read(new File("res/lasers/laser_greenNE.png")), // 5
+					ImageIO.read(new File("res/lasers/laser_greenSE.png")), // 6
+					ImageIO.read(new File("res/lasers/laser_greenSW.png")), // 7
+
+					ImageIO.read(new File("res/lasers/laser_blueNW.png")), // 8
+					ImageIO.read(new File("res/lasers/laser_blueNE.png")), // 9
+					ImageIO.read(new File("res/lasers/laser_blueSE.png")), // 10
+					ImageIO.read(new File("res/lasers/laser_blueSW.png")) };// 11
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,12 +68,29 @@ public class MirrorTile extends Tile {
 		g.setColor(Color.WHITE);
 		g.fillRect(x, y, WIDTH, WIDTH);
 
+		//				for (Laser l : lasers) {
+		//					l.render(x, y, g);
+		//				}
+
 		if (direction == FS) g.drawImage(NE, x, y, null);
 		else if (direction == BS) g.drawImage(NW, x, y, null);
 
 		for (Laser l : lasers) {
-			l.render(x, y, g); // LATER render lasers using separate laser sprite for mirrors?
+			if (direction == FS) {
+				if (l.getDirEntering() == Direction.EAST || l.getDirEntering() == Direction.SOUTH) {
+					g.drawImage(CORNER_LASERS[l.getColourIndex() * 4 + 2], x, y, null);
+				} else {
+					g.drawImage(CORNER_LASERS[l.getColourIndex() * 4 + 0], x, y, null);
+				}
+			} else if (direction == BS) {
+				if (l.getDirEntering() == Direction.EAST || l.getDirEntering() == Direction.NORTH) {
+					g.drawImage(CORNER_LASERS[l.getColourIndex() * 4 + 1], x, y, null);
+				} else {
+					g.drawImage(CORNER_LASERS[l.getColourIndex() * 4 + 3], x, y, null);
+				}
+			}
 		}
+
 	}
 
 	@Override

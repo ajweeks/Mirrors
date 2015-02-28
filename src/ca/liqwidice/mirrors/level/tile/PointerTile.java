@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import ca.liqwidice.mirrors.Colours;
 import ca.liqwidice.mirrors.input.Mouse;
 import ca.liqwidice.mirrors.level.Direction;
 import ca.liqwidice.mirrors.level.Laser;
@@ -26,12 +27,6 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 			E = ImageIO.read(new File("res/pointerE.png"));
 			S = ImageIO.read(new File("res/pointerS.png"));
 			W = ImageIO.read(new File("res/pointerW.png"));
-
-			// LATER  fix image loading when exporting to a jar
-			//			N = ImageIO.read(new File(PointerTile.class.getResource("res/pointerN.png").toURI()));
-			//			E = ImageIO.read(new File(PointerTile.class.getResource("res/pointerE.png").toURI()));
-			//			S = ImageIO.read(new File(PointerTile.class.getResource("res/pointerS.png").toURI()));
-			//			W = ImageIO.read(new File(PointerTile.class.getResource("res/pointerW.png").toURI()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -55,7 +50,7 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 		if (Mouse.leftClicked && Mouse.isInside(this)) {
 			this.on = !this.on;
 			if (this.on) {
-				if (GameState.levelEditingMode) this.colour = nextColour(); // cycle colours every time on is toggled
+				if (GameState.levelEditingMode) this.colour = Colours.nextColour(this.colour, false); // cycle colours every time on is toggled
 				this.lasers.add(new Laser(Direction.NULL, direction, colour));
 			} else removeAllLasers();
 		}
@@ -66,14 +61,6 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 		}
 	}
 
-	private Color nextColour() {
-		if (this.colour.equals(Color.RED)) return Color.GREEN;
-		else if (this.colour.equals(Color.GREEN)) return Color.BLUE;
-		else if (this.colour.equals(Color.BLUE)) return Color.ORANGE;
-		if (this.colour.equals(Color.ORANGE)) return Color.RED;
-		else return Color.red;
-	}
-
 	@Override
 	public void update(double delta) {
 		if (on) {
@@ -81,25 +68,27 @@ public class PointerTile extends Tile { //Symbolizes a laser pointer, a source o
 		} else return;// If we aren't shining light, there's no reason to update anything
 
 		// Start the updating chain
-		int[] checkedTiles = new int[level.height * level.width]; // 0 = not checked, 1 = checked once, 2 = checked twice (max)
+		int[] checkedTiles = new int[Level.height * Level.width]; // 0 = not checked, 1 = checked once, 2 = checked twice (max)
 		Direction nextDir = direction; // the direction towards the next tile (which is initially our direction)
 		int xx = x + nextDir.offset[0];
 		int yy = y + nextDir.offset[1];
 
 		do {
-			if (xx < 0 || xx >= level.width || yy < 0 || yy >= level.height) break; // The next direction is leading us into the wall
-			if (checkedTiles[xx + yy * level.width] >= 2) return; // we've already checked this tile twice (this line avoids infinite loops)
-			else checkedTiles[xx + yy * level.width]++;
+			if (xx < 0 || xx >= Level.width || yy < 0 || yy >= Level.height) break; // The next direction is leading us into the wall
+			if (checkedTiles[xx + yy * Level.width] >= 2) return; // we've already checked this tile twice (this line avoids infinite loops)
+			else checkedTiles[xx + yy * Level.width]++;
 
 			Tile nextTile = level.getTile(xx, yy); // get the tile to be updated
 			if (nextTile == null) break; // we hit a wall
 
-			if (nextTile instanceof PointerTile) { // Add all other opaque tiles here
+			if (nextTile instanceof PointerTile) { // !!!! Add all other opaque tiles here
 				break;
 			}
 			// Find the next direction *after* setting the new laser object
 			nextTile.addLaser(new Laser(nextDir.opposite(), colour));
-			nextDir = nextTile.lasers.get(nextTile.lasers.size() - 1).getDirExiting();
+			if (nextTile.lasers.size() > 0) {
+				nextDir = nextTile.lasers.get(nextTile.lasers.size() - 1).getDirExiting();
+			} else break;
 
 			xx = nextTile.getX() + nextDir.offset[0];
 			yy = nextTile.getY() + nextDir.offset[1];

@@ -9,6 +9,8 @@ import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
+import ca.liqwidice.mirrors.level.tile.MirrorTile;
+
 public class Laser implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -37,7 +39,7 @@ public class Laser implements Serializable {
 		}
 	}
 
-	public static final Laser NULL = new Laser(Direction.NULL, Direction.NULL, Color.RED);
+	public static final Laser NULL = new Laser(Direction.NULL, Direction.NULL, Color.BLACK);
 
 	private Direction entering; // The side of the mirror that the laser is entering on (Should only be Direction.NULL on tiles that emit lasers (just pointers atm))
 	private Direction exiting; // The side of the mirror that the laser is coming out of (Direction.NULL if it doesn't exit because it is being blocked or absorbed)
@@ -84,6 +86,20 @@ public class Laser implements Serializable {
 
 	public Direction getDirExiting() {
 		return exiting;
+	}
+
+	public int getColourIndex() {
+		if (colour.equals(Color.RED)) return MirrorTile.RED;
+		else if (colour.equals(Color.GREEN)) return MirrorTile.GREEN;
+		else if (colour.equals(Color.BLUE)) return MirrorTile.BLUE;
+		else {
+			System.err.println("Laser has an invalid colour! " + colour);
+			return RED_INDEX;
+		}
+	}
+
+	public Color getColour() {
+		return colour;
 	}
 
 }
