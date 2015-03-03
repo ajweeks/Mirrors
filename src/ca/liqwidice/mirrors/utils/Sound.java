@@ -11,7 +11,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public enum Sound {
-	SELECT("res/sounds/select.wav");
+	SELECT("res/sounds/select.wav"), WIN("res/sounds/win.wav");
 
 	public static float volume = -15.0f;
 	public final static float MAX_VOLUME = 6.0f;
@@ -20,7 +20,7 @@ public enum Sound {
 	private Clip clip;
 	private FloatControl control;
 	public boolean available = true;
-	
+
 	Sound(String filename) {
 		try {
 			AudioInputStream inStream = AudioSystem.getAudioInputStream(new File(filename));
@@ -28,6 +28,7 @@ public enum Sound {
 			clip.open(inStream);
 			control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		} catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+			System.out.println("Couldn't load " + filename + "!");
 			available = false;
 		}
 	}

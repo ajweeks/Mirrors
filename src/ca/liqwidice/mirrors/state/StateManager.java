@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import ca.liqwidice.mirrors.input.Keyboard;
 import ca.liqwidice.mirrors.input.Mouse;
-import ca.liqwidice.mirrors.utils.Sound;
 
 public class StateManager {
 
@@ -36,22 +35,25 @@ public class StateManager {
 	}
 
 	public void enterState(BasicState state) {
-		if(state == null) return;
+		if (state == null) return;
+		Mouse.releaseAll();
 		states.add(state);
 		states.get(states.size() - 1).init();
-		Sound.SELECT.play();
-		Mouse.releaseAll();
 	}
 
 	public void enterPreviousState() {
 		if (states.size() > 1) {
-			Sound.SELECT.play();
 			states.get(states.size() - 1).destroy();
 			states.remove(states.size() - 1);
 		}
 		// Release all inputs
 		Keyboard.releaseAll();
 		Mouse.releaseAll();
+	}
+
+	public BasicState getPreviousState() {
+		if (states.size() >= 2) return states.get(states.size() - 2);
+		return null;
 	}
 
 	public void destroy() { //To be called just before the game is closed (mostly to deal with open Threads and saving the level)

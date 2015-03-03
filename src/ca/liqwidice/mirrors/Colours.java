@@ -7,6 +7,7 @@ public class Colours {
 	public static final Color GREEN = Color.GREEN;
 	public static final Color BLUE = Color.BLUE;
 	public static final Color WHITE = Color.WHITE;
+	public static final Color OFF_BLACK = new Color(11,11,11);
 
 	public static Color purple = new Color(125, 22, 97);
 	public static Color sidebar = new Color(70, 21, 50);
@@ -20,10 +21,9 @@ public class Colours {
 		if (colour.equals(RED)) return GREEN;
 		else if (colour.equals(GREEN)) return BLUE;
 		else if (colour.equals(BLUE)) {
-			if(useWhite) return WHITE;
+			if (useWhite) return WHITE;
 			else return RED;
-		}
-		else if (colour.equals(WHITE)) return RED;
+		} else if (colour.equals(WHITE)) return RED;
 		else return RED;
 	}
 }

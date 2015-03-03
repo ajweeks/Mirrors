@@ -21,22 +21,22 @@ public class Level implements Serializable {
 	public static final int yo = 0;
 
 	public Tile[][] tiles;
-	public static int width, height;
+	public static int width = 10, height= 8;
+	// LATER add variably-sized w and h
 
 	public int level;
-	private boolean completed = false;
-	public boolean completedClicked = false; // Is only true when completed is true, and completed was NOT true last frame
+	private boolean completedNow = false; // Is true if every receptor tile is currently lit
+	public boolean completedClicked = false; // Is only true when completed is true this frame, and was NOT true last frame
+	public boolean completedEver = false; // Gets set to true once completedNow gets set to true. Only gets set to false when all levels are reset.
 
 	public Level(int level) {
-		Level.height = 8; // LATER add variably-sized w and h
-		Level.width = 10;
 		tiles = new Tile[height][width];
 		clear(); // instantiate the level with blank tiles
 		this.level = level;
 		updatePointerTiles(1.0d);
 		updateAllNonPointerTiles(1.0d);
 
-		this.completed = true; // instantiate to true so that when loading a level that has been completed already, the winscreen popup isn't shown
+		this.completedNow = true; // instantiate to true so that when loading a level that has been completed already, the winscreen popup isn't shown
 	}
 
 	public void update(double delta) {
@@ -52,21 +52,21 @@ public class Level implements Serializable {
 			removeAllLasers();
 			updatePointerTiles(delta);
 			updateAllNonPointerTiles(delta);
-
-			boolean receptorsOnBefore = this.completed;
-
-			if (allReceptorsOn()) {
-				this.completed = true;
-			} else {
-				this.completed = false;
-			}
-
-			if (this.completed && !receptorsOnBefore) {
-				completedClicked = true;
-			} else {
-				completedClicked = false;
-			}
 		}
+	}
+
+	public boolean checkCompleted() {
+		boolean completedBefore = completedNow;
+
+		if (allReceptorsOn()) completedNow = true;
+		else completedNow = false;
+
+		if (completedNow == true && completedBefore == false) completedClicked = true;
+		else completedClicked = false;
+
+		if (completedNow) completedEver = true;
+
+		return completedClicked;
 	}
 
 	public void render(Graphics g) {
@@ -88,11 +88,12 @@ public class Level implements Serializable {
 				int xxo = Mouse.x > Game.SIZE.width / 2 ? -100 : 0;
 				g.drawString("" + t.getID(), Mouse.x + xxo + 10, Mouse.y);
 				if (t instanceof ReceptorTile) {
-					g.drawString("" + ((ReceptorTile) t).getDirection(), Mouse.x + xxo+ 10, Mouse.y - 20);
+					g.drawString("" + ((ReceptorTile) t).getDirection(), Mouse.x + xxo + 10, Mouse.y - 20);
 					Receptor[] receptors = ((ReceptorTile) t).getReceptors();
 					for (int i = 0; i < receptors.length; i++) {
-						g.drawString("" + receptors[i].getDirection(), Mouse.x + xxo+ 10, Mouse.y + (i + 1) * 20);
-						g.drawString("" + receptors[i].getLaser().getDirEntering(), Mouse.x + xxo+ 60, Mouse.y + (i + 1) * 20);
+						g.drawString("" + receptors[i].getDirection(), Mouse.x + xxo + 10, Mouse.y + (i + 1) * 20);
+						g.drawString("" + receptors[i].getLaser().getDirEntering(), Mouse.x + xxo + 60, Mouse.y
+								+ (i + 1) * 20);
 					}
 				}
 			}
@@ -149,16 +150,22 @@ public class Level implements Serializable {
 				tiles[y][x] = new BlankTile(x, y, this);
 			}
 		}
+		this.completedNow = false;
+		this.completedClicked = false;
 	}
 
 	/** Copy all of the new level's fields into us */
 	public void copy(Level level) {
 		this.tiles = level.tiles;
-		this.completed = level.completed;
+		this.completedNow = level.completedNow;
 	}
 
-	public boolean isCompleted() {
-		return completed;
+	public void setCompletedEver(boolean completedEver) {
+		this.completedEver = completedEver;
+	}
+
+	public boolean isCompletedEver() {
+		return completedEver;
 	}
 
 }

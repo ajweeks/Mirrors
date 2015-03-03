@@ -50,14 +50,19 @@ public class MainMenuState extends BasicState {
 
 		if (manager.getButton(BTN_LEVEL_SELECT).clicked) {
 			game.enterGameState(new LevelSelectState(game));
+			Sound.SELECT.play();
+
 		} else if (manager.getButton(BTN_LOUDER).clicked) {
 			Sound.louder();
 			Sound.SELECT.play();
+
 		} else if (manager.getButton(BTN_QUIETER).clicked) {
 			Sound.quieter();
 			Sound.SELECT.play();
+
 		} else if (manager.getButton(BTN_QUIT).clicked) {
 			game.stopGame();
+
 		}
 	}
 

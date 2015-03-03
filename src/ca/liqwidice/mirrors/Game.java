@@ -1,10 +1,11 @@
 package ca.liqwidice.mirrors;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -20,7 +21,7 @@ public class Game extends JFrame implements Runnable {
 
 	public static final Dimension SIZE = new Dimension(790, 512);
 	public static final String TITLE = "Mirrors";
-	public static final String VERSION = "0.1.0a";
+	public static final String VERSION = "0.1.2b";
 
 	public static final Font font16 = new Font("consolas", Font.BOLD, 16);
 	public static final Font font32 = font16.deriveFont(32.0f);
@@ -44,7 +45,24 @@ public class Game extends JFrame implements Runnable {
 		new Keyboard(canvas);
 		new Mouse(canvas);
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowListener() {
+			public void windowClosing(WindowEvent e) {
+				stopGame();
+			}
+
+			public void windowOpened(WindowEvent e) {}
+
+			public void windowIconified(WindowEvent e) {}
+
+			public void windowDeiconified(WindowEvent e) {}
+
+			public void windowDeactivated(WindowEvent e) {}
+
+			public void windowClosed(WindowEvent e) {}
+
+			public void windowActivated(WindowEvent e) {}
+		});
 		setSize(WIDTH, HEIGHT);
 		add(canvas);
 		setResizable(false);
@@ -80,7 +98,7 @@ public class Game extends JFrame implements Runnable {
 		Graphics g = buffer.getDrawGraphics();
 
 		//Clear the screen
-		g.setColor(Color.BLACK);
+		g.setColor(Colours.OFF_BLACK);
 		g.fillRect(0, 0, SIZE.width, SIZE.height);
 
 		sm.render(g);
@@ -118,7 +136,6 @@ public class Game extends JFrame implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		stopGame();
 		System.exit(0);
 	}
 
@@ -130,8 +147,18 @@ public class Game extends JFrame implements Runnable {
 		sm.enterPreviousState();
 	}
 
+	public BasicState getCurrentState() {
+		return sm.currentState();
+	}
+
+	public BasicState getPreviousState() {
+		return sm.getPreviousState();
+	}
+
 	public synchronized void stopGame() {
-		sm.destroy(); //call destroy on all states
 		this.running = false;
+		sm.destroy();
+		this.setVisible(false);
+		System.exit(0);
 	}
 }
