@@ -31,7 +31,7 @@ public class GameState extends BasicState {
 	private Tile[] selectionTiles;
 	private int selectedTileIndex = 0;
 
-	private WinScreenPopup winscreen = new WinScreenPopup(180, 80, Game.SIZE.width - 210, Game.SIZE.height - 150);
+	private WinScreenPopup winscreen;
 	private boolean showWinScreen = false;
 
 	public static boolean levelEditingMode = false;
@@ -39,6 +39,8 @@ public class GameState extends BasicState {
 	public GameState(Game game, Level level) {
 		super(game);
 		this.level = level;
+		winscreen = new WinScreenPopup(330, 150, Game.SIZE.width - 460, Game.SIZE.height - 300);
+		Mouse.releaseAll(); // prevent clicking "through" the level selection button and updating the board
 		level.update(1.0);
 		this.selectionTiles = new Tile[] { new BlankTile(20, 50, level), new MirrorTile(20, 50 + Tile.WIDTH, 0, level),
 				new PointerTile(20, 50 + Tile.WIDTH * 2, 0, Color.RED, level),
@@ -92,39 +94,56 @@ public class GameState extends BasicState {
 			manager.updateAll(delta);
 		}
 
-		//		if (level.completedClicked) showWinScreen = true;
+		if (GameState.levelEditingMode == false) {
+			if (level.checkCompleted()) {
+				Sound.WIN.play();
+				showWinScreen = true;
+			}
+		} else {
+			showWinScreen = false;
+		}
 
 		if (showWinScreen) {
 			String action = winscreen.update(delta);
 			if (action == WinScreenPopup.NEXT) {
 				game.enterPreviousState();
-				game.enterGameState(LevelSelectState.getGameState(level.level + 1));
+				game.enterGameState(((LevelSelectState) game.getCurrentState()).getGameState(level.level + 1));
+				Sound.SELECT.play();
+
 			} else if (action == WinScreenPopup.PREV) {
 				game.enterPreviousState();
-				game.enterGameState(LevelSelectState.getGameState(level.level - 1));
+				game.enterGameState(((LevelSelectState) game.getCurrentState()).getGameState(level.level - 1));
+				Sound.SELECT.play();
+
 			} else if (action == WinScreenPopup.RETRY) {
-				level.clear();
-				game.enterPreviousState();
-				game.enterGameState(LevelSelectState.getGameState(level.level));
+				level.copy(Levels.load(level.level, true));
+				this.showWinScreen = false;
+				Sound.SELECT.play();
+
 			} else if (action == WinScreenPopup.EXIT) {
 				game.enterPreviousState();
+				Sound.SELECT.play();
 			}
 		}
 
-		level.update(delta);
+		if (showWinScreen == false) level.update(delta);
 
 		if (manager.getButton(LEVEL_SELECT).clicked) {
 			game.enterPreviousState();
+			Sound.SELECT.play();
 		} else if (manager.getButton(RESET).clicked) {
 			Sound.SELECT.play();
+			this.showWinScreen = false;
 			level.copy(Levels.load(level.level, true));
 			level.update(1.0);
 		} else if (manager.getButton(QUIT).clicked) {
 			game.stopGame();
 		} else if (manager.getButton(SAVE).clicked) {
 			Levels.save(level, true);
+			Sound.SELECT.play();
 		} else if (manager.getButton(CLEAR).clicked) {
 			level.clear();
+			Sound.SELECT.play();
 		}
 	}
 
@@ -138,7 +157,7 @@ public class GameState extends BasicState {
 
 		g.setColor(Color.WHITE);
 		g.setFont(Game.font32);
-		g.drawString("Level " + level.level, 10, 25);
+		g.drawString("Level " + level.level, 4, 25);
 
 		if (levelEditingMode) {
 			g.drawString("EDITING", 10, Game.SIZE.height - 8);
@@ -181,7 +200,7 @@ public class GameState extends BasicState {
 
 	@Override
 	public void destroy() {
-		Levels.save(level);
+		Levels.save(level, false);
 	}
 
 }
